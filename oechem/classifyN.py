@@ -1,14 +1,13 @@
 
 # By: Victoria T. Lim
 
+# Purpose: Find invertible nitrogens, and sum the angles around them for classification of geometry as planar, pyramidal, or somewhere in between.
+
 import argparse
 import math
 import os, sys
 import openeye.oechem as oechem
 
-
-def findAndSum(mol):
-    return
 
 def classifyN(insdf):
     """
@@ -25,7 +24,7 @@ def classifyN(insdf):
         oechem.OEThrow.Warning("Unable to open %s for reading" % insdf)
         return
 
-    ### For each molecule: for each conf, generate input
+    ### Loop over conf of each mol
     for mol in ifs.GetOEMols():
         print('\n%s\t%d' % (mol.GetTitle(), mol.NumConfs()))
         for i, conf in enumerate( mol.GetConfs()):
@@ -36,10 +35,6 @@ def classifyN(insdf):
                 ang2 = math.degrees(oechem.OEGetAngle(conf, nbors[1],atom,nbors[2]))
                 ang3 = math.degrees(oechem.OEGetAngle(conf, nbors[2],atom,nbors[0]))
                 print("Invertible N with index %d: %f" % (atom.GetIdx(),math.fsum([ang1,ang2,ang3])))
-
-
-
-
     ifs.close()
 
 
