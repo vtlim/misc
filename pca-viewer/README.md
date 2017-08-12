@@ -4,9 +4,9 @@
 By: Victoria Lim and Matthew Agee
 
 ## Objective
-This script reads in a molecule and finds its best 2D representation (showing as much of it as possible in 2D).
-The task is accomplished with principal component analysis.
-*Status:* rough draft. Verified to work from manual input of xyz coordinates.
+This script reads in a molecule and finds its best 2D representation (showing as much of it as possible in 2D).  
+The task is accomplished with principal component analysis.  
+*Status:* rough draft. Verified to work from manual input of xyz coordinates.  
 
 ## TO DO
 1. add in read / write functions
