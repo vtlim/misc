@@ -1,0 +1,864 @@
+0
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4424   -0.2007    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7766   -1.0067    0.0009 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0234    0.1107   -0.0008 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5142    1.2226   -0.0007 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0167    0.7219   -0.0194 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6912   -0.7780    0.8932 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6874   -0.8149   -0.8689 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.7146   -0.7442    0.0016 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2038842294
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+260.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1994249869
+
+$$$$
+15
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4423   -0.2019    0.0059 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7794   -0.9993   -0.0752 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0223    0.1127    0.0316 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5089    1.2238    0.0994 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0183    0.7150   -0.0902 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7118   -0.7113    0.9346 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6644   -0.8810   -0.8191 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.6984   -0.7714    0.1526 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2028042370
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+613.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+24
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1982326994
+
+$$$$
+30
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4422   -0.2045    0.0125 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7871   -0.9873   -0.1114 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0198    0.1174    0.0530 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4966    1.2299    0.1417 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0237    0.7043   -0.1220 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7206   -0.6825    0.9557 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6477   -0.9159   -0.7889 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.6502   -0.8426    0.3139 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1997364293
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+572.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+22
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1947338968
+
+$$$$
+45
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4433   -0.2057    0.0222 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7921   -0.9950   -0.0735 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0174    0.1200    0.0501 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4907    1.2352    0.0632 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0337    0.7034   -0.0623 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7061   -0.7404    0.9385 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6508   -0.8754   -0.8153 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.5657   -0.9269    0.5112 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1954090654
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+395.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+15
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1900598665
+
+$$$$
+60
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4442   -0.2063    0.0244 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8025   -0.9989   -0.0671 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0157    0.1197    0.0446 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4871    1.2333    0.0345 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0397    0.7016   -0.0349 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6968   -0.7669    0.9280 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6542   -0.8572   -0.8277 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.4433   -1.0382    0.6617 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1909187683
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+259.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1853338815
+
+$$$$
+75
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4450   -0.2036    0.0220 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8142   -1.0044   -0.0621 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0157    0.1166    0.0314 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4906    1.2264    0.0105 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0399    0.7064   -0.0052 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6879   -0.7911    0.9111 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6654   -0.8296   -0.8462 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2837   -1.1660    0.7719 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1874335900
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+260.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1820209035
+
+$$$$
+90
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4451   -0.1952    0.0165 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8229   -1.0122   -0.0525 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0189    0.1110    0.0115 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5043    1.2147   -0.0155 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0319    0.7204    0.0321 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6808   -0.8142    0.8858 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6849   -0.7850   -0.8718 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.0886   -1.3001    0.8354 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1859849079
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+284.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+11
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1808849916
+
+$$$$
+105
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4448   -0.1784    0.0091 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8241   -1.0191   -0.0434 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0246    0.1054   -0.0061 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5262    1.2021   -0.0276 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0151    0.7465    0.0560 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6841   -0.8156    0.8641 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7056   -0.7383   -0.8926 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8730   -1.4378    0.8307 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1869429365
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+337.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+13
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1825393992
+
+$$$$
+120
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4455   -0.1532    0.0032 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8132   -1.0324   -0.0169 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0315    0.0965   -0.0228 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5567    1.1831   -0.0650 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9891    0.7839    0.0988 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6972   -0.8235    0.8284 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7313   -0.6580   -0.9234 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6583   -1.5536    0.7871 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1899227226
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+524.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+20
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1861395897
+
+$$$$
+135
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4467   -0.1187   -0.0028 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7958   -1.0393   -0.0182 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0377    0.0958   -0.0208 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5889    1.1720   -0.0356 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9644    0.8351    0.0650 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7219   -0.7536    0.8433 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7433   -0.6426   -0.9147 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4592   -1.6760    0.6326 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1938752905
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+640.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+25
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1907206581
+
+$$$$
+150
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4482   -0.0844   -0.0048 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7745   -1.0493   -0.0141 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0422    0.0937   -0.0153 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6201    1.1578   -0.0160 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9390    0.8850    0.0331 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7449   -0.6832    0.8604 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7561   -0.6258   -0.9024 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.2981   -1.7628    0.4402 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1977064797
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+284.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+11
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1949026979
+
+$$$$
+165
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4495   -0.0591   -0.0033 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7575   -1.0578   -0.0063 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0447    0.0916   -0.0087 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6424    1.1460   -0.0091 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9201    0.9208    0.0087 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7611   -0.6291    0.8759 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7660   -0.6141   -0.8896 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.1944   -1.8131    0.2286 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2003748476
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+310.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+12
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1977978620
+
+$$$$
+180
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4499   -0.0496   -0.0001 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7513   -1.0609    0.0014 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0455    0.0910   -0.0014 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6505    1.1416   -0.0035 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9130    0.9337   -0.0164 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7676   -0.5935    0.8931 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7689   -0.6248   -0.8727 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.1585   -1.8298    0.0027 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2013269923
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+259.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1988678401
+
+$$$$
+195
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4495   -0.0592    0.0031 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7579   -1.0574    0.0095 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0447    0.0919    0.0057 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6421    1.1464    0.0015 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9201    0.9197   -0.0408 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7647   -0.5833    0.9086 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7622   -0.6593   -0.8552 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.1950   -1.8137   -0.2224 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2003954093
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+260.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1978322223
+
+$$$$
+210
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4481   -0.0849    0.0044 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7757   -1.0475    0.0216 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0422    0.0947    0.0103 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6191    1.1593   -0.0008 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9397    0.8830   -0.0554 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7540   -0.6044    0.9155 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7459   -0.7047   -0.8454 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.3000   -1.7666   -0.4248 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1976844896
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+259.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1949302098
+
+$$$$
+225
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4463   -0.1189    0.0028 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7977   -1.0355    0.0308 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0377    0.0980    0.0138 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5872    1.1752    0.0064 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9654    0.8334   -0.0749 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7402   -0.6329    0.9212 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7225   -0.7636   -0.8356 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4601   -1.6856   -0.6062 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1938762612
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+259.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+10
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1906967009
+
+$$$$
+240
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4449   -0.1531   -0.0022 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8163   -1.0250    0.0385 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0314    0.1015    0.0128 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5538    1.1901    0.0181 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.9919    0.7826   -0.0914 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7250   -0.6656    0.9216 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6978   -0.8183   -0.8315 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6594   -1.5722   -0.7476 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1899126202
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+233.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+9
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1861463871
+
+$$$$
+255
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4445   -0.1789   -0.0091 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8255   -1.0155    0.0516 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0243    0.1073    0.0014 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5245    1.2049    0.0111 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0161    0.7438   -0.0792 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7047   -0.7157    0.9068 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6825   -0.8384   -0.8474 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8762   -1.4446   -0.8172 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1868956802
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+233.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+9
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1825842864
+
+$$$$
+270
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4447   -0.1956   -0.0164 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8244   -1.0079    0.0628 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0187    0.1129   -0.0163 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5023    1.2177   -0.0035 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0330    0.7184   -0.0537 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6839   -0.7638    0.8862 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6790   -0.8361   -0.8703 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.0913   -1.3068   -0.8210 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1859869534
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+284.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+11
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1809577984
+
+$$$$
+285
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4446   -0.2041   -0.0217 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8156   -1.0003    0.0719 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0155    0.1181   -0.0358 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4889    1.2288   -0.0279 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0410    0.7053   -0.0190 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6651   -0.8065    0.8631 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6854   -0.8159   -0.8946 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2859   -1.1717   -0.7597 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1874490035
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+233.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+9
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1820615657
+
+$$$$
+300
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4439   -0.2068   -0.0236 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8041   -0.9942    0.0805 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0155    0.1210   -0.0496 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4849    1.2356   -0.0570 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0407    0.7014    0.0141 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6536   -0.8372    0.8439 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6952   -0.7893   -0.9135 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.4459   -1.0438   -0.6467 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1909154587
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+310.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+12
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1854112599
+
+$$$$
+315
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4427   -0.2062   -0.0192 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7951   -0.9853    0.1051 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0171    0.1219   -0.0590 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4872    1.2372   -0.1160 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0344    0.7022    0.0643 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6455   -0.8749    0.8198 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7086   -0.7425   -0.9340 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.5671   -0.9373   -0.4835 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1954278791
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+702.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+29
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1900449362
+
+$$$$
+330
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4422   -0.2041   -0.0133 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7861   -0.9888    0.1039 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0199    0.1179   -0.0525 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.4975    1.2309   -0.1286 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0259    0.7091    0.0726 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6522   -0.8730    0.8234 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7127   -0.7322   -0.9313 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.6507   -0.8406   -0.3171 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1997265332
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+523.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+20
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1947171094
+
+$$$$
+345
+  -OEChem-04271722083D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -1.4424   -0.2018   -0.0090 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7789   -1.0031    0.0426 O   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0226    0.1121   -0.0262 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.5091    1.2253   -0.0474 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -2.0187    0.7196    0.0124 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.6755   -0.8123    0.8660 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.7003   -0.7847   -0.8959 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.6995   -0.7679   -0.1700 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  3  1  0  0  0  0
+  1  5  1  0  0  0  0
+  1  6  1  0  0  0  0
+  1  7  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  8  1  0  0  0  0
+  3  4  2  0  0  0  0
+M  END
+> <QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.2027743385
+
+> <QM Turbomole Opt. Runtime (sec) COSMO-TPSSh-D3BJ/def2-TZVP>
+523.0
+
+> <Original omega conformer number>
+1
+
+> <QM Turbomole Opt. Steps COSMO-TPSSh-D3BJ/def2-TZVP>
+20
+
+> <QM Turbomole Initial Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP>
+-229.1981849924
+
+$$$$

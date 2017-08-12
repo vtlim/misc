@@ -1,0 +1,5 @@
+hf.sdf 'QM Turbomole Final Opt. Energy (Har) HF/6-31G*' 'HF/6-31G*'
+hfsolv.sdf 'QM Turbomole Final Opt. Energy (Har) HF/6-31G*' 'COSMO-HF/6-31G*'
+tpssh.sdf 'QM Turbomole Final Opt. Energy (Har) TPSSh/def2-TZVP' 'TPSSh-D3BJ/def2-TZVP'
+cosmoInfinity.sdf 'QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP' 'COSMO-TPSSh-D3BJ/def2-TZVP' 
+#5_solv-TPSSh-Eps80/cosmo80.sdf 'QM Turbomole Final Opt. Energy (Har) COSMO-TPSSh-D3BJ/def2-TZVP' 'COSMO-TPSSh-D3BJ/def2-TZVP'
