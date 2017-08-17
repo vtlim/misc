@@ -30,8 +30,11 @@ def plotSDF(infile, tag,figname='lineplot.png'):
     for mol in ifs.GetOEMols():
         print(mol.GetTitle(), mol.NumConfs())
         for j, conf in enumerate( mol.GetConfs() ):
-            xlist.append(int(mol.GetTitle()))
-            ylist.append(float(oechem.OEGetSDData(conf, tag)))
+            try:
+                ylist.append(float(oechem.OEGetSDData(conf, tag)))
+                xlist.append(int(mol.GetTitle()))
+            except ValueError as err:
+                pass  # mols not converged may not have tag
 
     ### convert to numpy array, take relative e, convert to kcal/mol
     ylist = np.array(ylist)
@@ -39,7 +42,7 @@ def plotSDF(infile, tag,figname='lineplot.png'):
     ylist = 627.5095*ylist
 
     ### Plot.
-    xlabel='COOH dihedral angle (deg)'
+    xlabel='conformation number'
     ylabel="Relative energy (kcal/mol)"
 
     fig = plt.figure()
@@ -48,10 +51,12 @@ def plotSDF(infile, tag,figname='lineplot.png'):
 
     plt.ylabel(ylabel,fontsize=14)
     plt.xlabel(xlabel,fontsize=14)
-    plt.plot(xlist, ylist)
+    plt.scatter(xlist, ylist)
+#    plt.plot(xlist, ylist)
     plt.ylim(-1, 16)
 #    plt.xticks(range(RefNumConfs),xlabs,fontsize=12)
 #    plt.yticks(fontsize=12)
+    plt.grid()
 
 
     plt.savefig(figname,bbox_inches='tight')
