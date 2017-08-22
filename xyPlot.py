@@ -73,7 +73,7 @@ def xyPlot(**kwargs):
             ySize = 18
             kSize = 16
             if legend:
-                leg = ax1.legend(leglabel,loc='lower right')
+                leg = ax1.legend(leglabel,loc='upper left')
 
         ### Label the figure.
         ax1.set_title(plttitle,fontsize=tSize)
@@ -123,11 +123,12 @@ def xyPlot(**kwargs):
     publish =  opt['publish']
     if opt['mean'] != 0:
         runMean = True
-        runLength = opt['mean']
+        runLength = int(opt['mean'])
     else:
         runMean = False
     if opt['columns'] is not None:
-        cols = map(int,opt['columns'].split(','))
+        cols = list(map(int,opt['columns'].split(',')))
+    print(cols)
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
         legend=True
@@ -147,7 +148,7 @@ def xyPlot(**kwargs):
     y_mat = parseColumns(data)
     if uncertf is not None:
         u_mat = parseColumns(uncerts)
-    print x[:5], y_mat[:5]
+    print(x[:5], y_mat[:5])
 
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample: x_mat, y_mat = subSample(x,y_mat)
@@ -162,20 +163,21 @@ def xyPlot(**kwargs):
 
     ### Set plot limits.
     axes = plt.gca()
-    #axes.set_ylim([-0.5,3])
-    axes.set_xlim([min(x)-10,max(x)+10])
+    axes.set_ylim([-0.1,3])
+#    axes.set_xlim([min(x)-10,max(x)+10])
+    axes.set_xlim([min(x)-0.2,max(x)+0.2])
 
 
     ### Color the rainbow.
-    colors = mpl.cm.Set1(np.linspace(0, 1, 8)) # qualitative
-    #colors = mpl.cm.rainbow(np.linspace(0, 1, len(y_mat))) # from red to purple
+#    colors = mpl.cm.Set1(np.linspace(0, 1, 8)) # qualitative
+    colors = mpl.cm.tab20(np.linspace(0, 1, len(y_mat)+5)) # qualitative
     #colors = mpl.cm.rainbow(np.linspace(0, 0.4, len(y_mat))) # from green to purple
     #colors = mpl.cm.rainbow(np.linspace(0, 0.2, len(y_mat))) # from blue to purple
     #colors = mpl.cm.rainbow(np.linspace(0.4, 1, len(y_mat)))
 
     # manually editing colors
-    #colors=colors[:2]
-    colors=[colors[1],colors[3]]
+#    colors=colors[:2]
+#    colors=[colors[1],colors[3]]
 
     ### Plot the data.
     if doSubsample:
@@ -188,11 +190,11 @@ def xyPlot(**kwargs):
     else:
         for color, y in zip(colors, y_mat):
             print(len(x),len(y))
-#            ax1.plot(x, y, color=color)
-            ax1.plot(x, y, lw=0.8, color=color) # thinner line
+            ax1.plot(x, y, color=color)
+#            ax1.plot(x, y, lw=0.8, color=color) # thinner line
 
     ### Custom text on plot
-    ax1.text(2,11,"A",fontsize=10)
+#    ax1.text(2,11,"A",fontsize=10)
 
     formatFig(ax1,plt)
 
@@ -204,11 +206,12 @@ if __name__ == "__main__":
                         help="Name of the input file. First line is assumed "
                         + "to be some heading line and is NOT read in.")
     parser.add_argument("-d", "--delimiter",
-                        help="Delimiter separating columns in file.")
+                        help="Put in quotes the delimiter separating columns.")
     parser.add_argument("-c", "--columns",default=None,
-                        help="Specify particular data columns to plot. "+
-                        "0th column is x, so don't specify 0. "+
-                        "If not specified, will only plot first data column.")
+                        help="Specify particular data columns to plot.\
+                        Separate values with commas.\
+                        0th column is x, so don't specify 0.\
+                        If not specified, will only plot first data column.")
     parser.add_argument("-u", "--uncert",default=None,
                         help="Name of the file with corresponding uncertainties"
                         + ". Not compatible with running means or subsampling.")
