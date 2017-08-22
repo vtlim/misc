@@ -128,7 +128,6 @@ def xyPlot(**kwargs):
         runMean = False
     if opt['columns'] is not None:
         cols = list(map(int,opt['columns'].split(',')))
-    print(cols)
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
         legend=True
@@ -148,7 +147,6 @@ def xyPlot(**kwargs):
     y_mat = parseColumns(data)
     if uncertf is not None:
         u_mat = parseColumns(uncerts)
-    print(x[:5], y_mat[:5])
 
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample: x_mat, y_mat = subSample(x,y_mat)
