@@ -1,9 +1,19 @@
 #!/usr/bin/python
 
-# By: Victoria T. Lim
-# If plopping together data from multiple files, Google Sheets can help.
+# Generate XY line plots from text data file.
+#   Options include plotting specific columns, separating data to subplots,
+#   subsampling data, taking running mean over data, and plotting alongside
+#   uncertainty values from another data file.
+#
+# If combining data together from multiple files, Google Sheets can help.
 #   Then copy from sheets into vim window.
 #   Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
+#
+# By: Victoria T. Lim
+#
+# TODO:
+#  - Write documentation
+#  - Plot specific columns only
 
 import os
 import numpy as np
@@ -15,17 +25,22 @@ from pymbar import timeseries
 
 
 
-def subSample(x, y_mat):
+def subSample(x, y_mat, num_cols):
     """
     Parameters
     ----------
+    x
+    y_mat
+    num_cols
+
     Returns
     -------
+
     """
-    #x_mat=np.empty([len(y_mat),len(x)])
     x_mat = []
-    z_mat = [] # the subsampled y_mat
-    for i, y in enumerate(y_mat):
+    z_mat = [] # subsampled y_mat
+    for i in range(num_cols):
+        y = y_mat[:,i]
         # Compute correlation times.
         g = timeseries.statisticalInefficiency(y)
         indices = timeseries.subsampleCorrelatedData(y, g)
@@ -35,28 +50,37 @@ def subSample(x, y_mat):
         z_mat.append(y_sub)
         x_mat.append(x_sub)
         print("\nLength of original timeseries data: %d\nLength of subsampled\
- timeseries data: %d\n" % (len(y), len(y_sub)) )
+ timeseries data: %d" % (len(y), len(y_sub)) )
     return x_mat, z_mat
 
 
-def runningMean(y_mat, N):
-    # http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
-    z_mat = [] # the subsampled y_mat
-    for i, y in enumerate(y_mat):
+def runningMean(y_mat, N, num_cols):
+    """
+    Parameters
+    ----------
+    y_mat
+    N
+    num_cols
+
+    Returns
+    -------
+
+    Reference
+    ---------
+    http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+    """
+
+    z_mat = [] # subsampled y_mat
+    for i in range(num_cols):
+        y = y_mat[:,i]
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
     return z_mat
 
 
-
-
-#    if legend: leg = ax1.legend(leglabel,loc='center right',bbox_to_anchor=(1.4,0.5))  # legend on outside right
-#    plt.savefig(figname, bbox_extra_artists=(leg,), bbox_inches='tight') # bbox is xy where origin is left bottom
-
-
 def xyPlot(**kwargs):
 
-    def formatFig(ax1, plt):
+    def formatFig(ax1, plt, legend):
 
         if publish:
             tSize = 12
@@ -65,7 +89,6 @@ def xyPlot(**kwargs):
             kSize = 8
             fig.set_size_inches(3.37,1.7)
             if legend:
-#                leg = ax1.legend(leglabel,loc='upper center',fontsize=8,bbox_to_anchor=(0.50,1.65),ncol=2) # all PMFs together
                 leg = ax1.legend(leglabel,loc='upper center',fontsize=8,bbox_to_anchor=(0.50,1.30),ncol=2)
         else:
             tSize = 20
@@ -92,35 +115,16 @@ def xyPlot(**kwargs):
 
         plt.show()
 
-    def readFile(filename):
-        """
-        """
-        with open(filename) as f:
-            data = f.read()
-        data = data.split('\n')[1:-1] # accounts for heading and final newline char *****
-        return data
-
-    def parseColumns(data):
-        y_mat = []
-        try:
-            for i in cols:
-               y_mat.append([row.split(delimiter)[i] for row in data])
-        except (NameError, IndexError) as err:
-            y_mat.append([row.split(delimiter)[1] for row in data])
-        y_mat = np.array(y_mat)
-        y_mat = y_mat.astype(np.float)
-        return y_mat
-
-
     filename = opt['input']
-    delimiter = opt['delimiter']
     uncertf = opt['uncert']
     doSubsample =  opt['subsample']
     xlabel = opt['xlabel']
     ylabel = opt['ylabel']
     plttitle = opt['title']
+    legend = opt['legend']
     figname = opt['output']
     publish =  opt['publish']
+
     if opt['mean'] != 0:
         runMean = True
         runLength = int(opt['mean'])
@@ -133,91 +137,89 @@ def xyPlot(**kwargs):
         legend=True
 
     ### Read in data.
-    data = readFile(filename)
+    data = np.loadtxt(filename)
     if uncertf is not None:
-        uncerts = readFile(uncertf)
-
-    ### Load data for x column.
-    x = [float(row.split(delimiter)[0]) for row in data]
-
-#    # Convert the x-axis to ns (based on 2 fs step)
-#    x = 0.002*np.array(x)
-
-    ### Load data for y columns.
-    y_mat = parseColumns(data)
-    if uncertf is not None:
-        u_mat = parseColumns(uncerts)
+        uncerts = np.loadtxt(uncertf)
+    x = data[:,0]
+    y_mat = data[:,1:]
+    try:
+        num_cols = y_mat.shape[1]
+    except IndexError:
+        num_cols = 1
+    if num_cols == 1: y_mat = y_mat.flatten()
+    print("Number of data columns parsed: {}".format(num_cols))
 
     ### subsample data (may not want to if not timeseries data!)
-    if doSubsample: x_mat, y_mat = subSample(x,y_mat)
+    if doSubsample: x_mat, y_mat = subSample(x,y_mat,num_cols)
     if runMean:
-        y_mat = runningMean(y_mat,runLength)
-        x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32) # now x is approximate, not exactly matching with y
+        y_mat = runningMean(y_mat,runLength,num_cols)
+        # x may not directly match with y bc of running mean
+        x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
 
-    ### Initialize figure.
+    ### Initialize figure and set plot limits.
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
-
-
-    ### Set plot limits.
     axes = plt.gca()
-    axes.set_ylim([-0.1,3])
-#    axes.set_xlim([min(x)-10,max(x)+10])
     axes.set_xlim([min(x)-0.2,max(x)+0.2])
-
+#    axes.set_ylim([-0.1,3])
 
     ### Color the rainbow.
-#    colors = mpl.cm.Set1(np.linspace(0, 1, 8)) # qualitative
-    colors = mpl.cm.tab20(np.linspace(0, 1, len(y_mat)+5)) # qualitative
-    #colors = mpl.cm.rainbow(np.linspace(0, 0.4, len(y_mat))) # from green to purple
-    #colors = mpl.cm.rainbow(np.linspace(0, 0.2, len(y_mat))) # from blue to purple
-    #colors = mpl.cm.rainbow(np.linspace(0.4, 1, len(y_mat)))
-
-    # manually editing colors
-#    colors=colors[:2]
-#    colors=[colors[1],colors[3]]
+    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
 
     ### Plot the data.
-    if doSubsample:
-        for color, x, y in zip(colors, x_mat, y_mat):
-            ax1.plot(x, y, color=color)
-    elif uncertf is not None:
-        for color, y, u in zip(colors, y_mat, u_mat):
-#            ax1.errorbar(x, y, yerr=u, color=color)
-            ax1.errorbar(x, y, yerr=u, capsize=0.8,lw=0.8,color=color)
-    else:
-        for color, y in zip(colors, y_mat):
-            print(len(x),len(y))
-            ax1.plot(x, y, color=color)
-#            ax1.plot(x, y, lw=0.8, color=color) # thinner line
+    for i in range(num_cols):
+        if doSubsample:
+            x = x_mat[i]
+            y = y_mat[i]
+        elif runMean:
+            y = y_mat[i]
+        elif num_cols == 1:
+            y = y_mat
+        else:
+            y = y_mat[:,i]
+        print(len(x),y.shape)
+        if uncertf is not None:
+            # UNTESTED as of 4/6/18
+            ax1.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=color[i])
+        else:
+            ax1.plot(x, y, lw=0.8, color=colors[i]) # thinner line
 
     ### Custom text on plot
 #    ax1.text(2,11,"A",fontsize=10)
 
-    formatFig(ax1,plt)
+    formatFig(ax1,plt,legend)
 
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+
+    # DATA INPUT
     parser.add_argument("-i", "--input",
                         help="Name of the input file. First line is assumed "
-                        + "to be some heading line and is NOT read in.")
-    parser.add_argument("-d", "--delimiter",
-                        help="Put in quotes the delimiter separating columns.")
-    parser.add_argument("-c", "--columns",default=None,
-                        help="Specify particular data columns to plot.\
-                        Separate values with commas.\
-                        0th column is x, so don't specify 0.\
-                        If not specified, will only plot first data column.")
+                        "to be some heading line and is NOT read in.")
     parser.add_argument("-u", "--uncert",default=None,
                         help="Name of the file with corresponding uncertainties"
                         + ". Not compatible with running means or subsampling.")
+    parser.add_argument("-c", "--columns",default=None,
+                        help="Specify particular data columns to plot. Separate"
+                        " values with commas. 0th column is x, so don't specify"
+                        " 0. If not specified, will only plot first data column."
+                        "TODO")
+    parser.add_argument("-c", "--columns",default=None,
+                        help="Specify particular data columns to plot. Separate"
+                        " values with commas. 0th column is x, so don't specify"
+                        " 0. If not specified, will only plot first data column."
+                        "TODO")
+
+    # DATA PROCESSING
     parser.add_argument("-m", "--mean", default=0,
                         help="If not default=0, take running means over the "
                         + "specified number of data points for each column.")
     parser.add_argument("-s", "--subsample", action="store_true",default=False,
                         help="Subsample y data based on correlation times.")
+
+    # PLOT LABELING AND FORMATTING
     parser.add_argument("-x", "--xlabel",default="",
                         help="Label for x data.")
     parser.add_argument("-y", "--ylabel",default="",
