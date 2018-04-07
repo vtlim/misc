@@ -16,6 +16,7 @@
 #  - Plot specific columns only
 
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -78,63 +79,61 @@ def runningMean(y_mat, N, num_cols):
     return z_mat
 
 
+def formatFig(ax1, plt, **kwargs):
+    """
+    """
+
+    if opt['legend'] is not None:
+        leglabel = opt['legend'].split(';')
+        legend=True
+    if opt['publish']:
+        tSize = 12
+        xSize = 8
+        ySize = 8
+        kSize = 8
+        fig.set_size_inches(3.37,1.7)
+        if 'legend' in locals():
+            leg = ax1.legend(leglabel,loc='upper center',fontsize=8,bbox_to_anchor=(0.50,1.30),ncol=2)
+    else:
+        tSize = 20
+        xSize = 18
+        ySize = 18
+        kSize = 16
+        if 'legend' in locals():
+            leg = ax1.legend(leglabel,loc='upper left')
+
+    ### Label the figure.
+    ax1.set_title(opt['title'],fontsize=tSize)
+    ax1.set_xlabel(opt['xlabel'],fontsize=xSize)
+    ax1.set_ylabel(opt['ylabel'],fontsize=ySize)
+    for xtick in ax1.get_xticklabels():
+        xtick.set_fontsize(kSize)
+    for ytick in ax1.get_yticklabels():
+        ytick.set_fontsize(kSize)
+
+    ### Save figure.
+    if opt['publish']:
+        plt.savefig(opt['output'], bbox_inches='tight',dpi=300)
+    else:
+        plt.savefig(opt['output'], bbox_inches='tight')
+    plt.show()
+
+
 def xyPlot(**kwargs):
+    """
+    """
 
-    def formatFig(ax1, plt, legend):
-
-        if publish:
-            tSize = 12
-            xSize = 8
-            ySize = 8
-            kSize = 8
-            fig.set_size_inches(3.37,1.7)
-            if legend:
-                leg = ax1.legend(leglabel,loc='upper center',fontsize=8,bbox_to_anchor=(0.50,1.30),ncol=2)
-        else:
-            tSize = 20
-            xSize = 18
-            ySize = 18
-            kSize = 16
-            if legend:
-                leg = ax1.legend(leglabel,loc='upper left')
-
-        ### Label the figure.
-        ax1.set_title(plttitle,fontsize=tSize)
-        ax1.set_xlabel(xlabel,fontsize=xSize)
-        ax1.set_ylabel(ylabel,fontsize=ySize)
-        for xtick in ax1.get_xticklabels():
-            xtick.set_fontsize(kSize)
-        for ytick in ax1.get_yticklabels():
-            ytick.set_fontsize(kSize)
-
-        ### Save figure.
-        if publish:
-            plt.savefig(figname, bbox_inches='tight',dpi=300)
-        else:
-            plt.savefig(figname, bbox_inches='tight')
-
-        plt.show()
-
+    ### Assign input arguments.
     filename = opt['input']
     uncertf = opt['uncert']
     doSubsample =  opt['subsample']
-    xlabel = opt['xlabel']
-    ylabel = opt['ylabel']
-    plttitle = opt['title']
-    legend = opt['legend']
-    figname = opt['output']
-    publish =  opt['publish']
+    groupsize = opt['group']
 
     if opt['mean'] != 0:
         runMean = True
         runLength = int(opt['mean'])
-    else:
-        runMean = False
     if opt['columns'] is not None:
-        cols = list(map(int,opt['columns'].split(',')))
-    if opt['legend'] is not None:
-        leglabel = opt['legend'].split(';')
-        legend=True
+        cols = list(map(int,opt['columns'].split(';')))
 
     ### Read in data.
     data = np.loadtxt(filename)
@@ -142,52 +141,61 @@ def xyPlot(**kwargs):
         uncerts = np.loadtxt(uncertf)
     x = data[:,0]
     y_mat = data[:,1:]
-    try:
-        num_cols = y_mat.shape[1]
-    except IndexError:
-        num_cols = 1
+    num_cols = y_mat.shape[1]
     if num_cols == 1: y_mat = y_mat.flatten()
-    print("Number of data columns parsed: {}".format(num_cols))
+    if groupsize != 0:
+        if num_cols != 1:
+            sys.exit("ERROR: This script is not equipped to break input "
+                     "data into groups with multiple data columns.")
+        if doSubsample:
+            sys.exit("ERROR: This script is not equipped to subsample "
+                     "along with breaking data into groups.")
+        if 'runMean' in locals():
+            sys.exit("ERROR: This script is not equipped to take a running "
+                     "mean along with breaking data into groups.")
+        y_mat = np.array_split(y_mat, groupsize) # LIST of subarrays, may not be equally split
+        num_cols = len(y_mat)
+    print("How many data series to plot: {}".format(num_cols))
 
     ### subsample data (may not want to if not timeseries data!)
-    if doSubsample: x_mat, y_mat = subSample(x,y_mat,num_cols)
-    if runMean:
+    if doSubsample:
+        x_mat, y_mat = subSample(x,y_mat,num_cols)
+    elif 'runMean' in locals():
         y_mat = runningMean(y_mat,runLength,num_cols)
         # x may not directly match with y bc of running mean
         x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
 
-    ### Initialize figure and set plot limits.
+
+    ### Initialize figure.
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     axes = plt.gca()
-    axes.set_xlim([min(x)-0.2,max(x)+0.2])
+#    axes.set_xlim([min(x)-0.2,max(x)+0.2])
 #    axes.set_ylim([-0.1,3])
-
-    ### Color the rainbow.
-    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
+    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
 
     ### Plot the data.
     for i in range(num_cols):
         if doSubsample:
             x = x_mat[i]
             y = y_mat[i]
-        elif runMean:
+        elif 'runMean' in locals():
             y = y_mat[i]
+        if groupsize != 0:
+            y = y_mat[i]
+            x = np.arange(len(y))
         elif num_cols == 1:
             y = y_mat
         else:
             y = y_mat[:,i]
-        print(len(x),y.shape)
-        if uncertf is not None:
-            # UNTESTED as of 4/6/18
+        print(i, len(x), y.shape)
+        if uncertf is not None: # UNTESTED as of 4/6/18
             ax1.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=color[i])
         else:
             ax1.plot(x, y, lw=0.8, color=colors[i]) # thinner line
 
-    ### Custom text on plot
-#    ax1.text(2,11,"A",fontsize=10)
-
-    formatFig(ax1,plt,legend)
+#    ax1.text(2,11,"A",fontsize=10) # custom text on plot
+    formatFig(ax1,plt,**opt)
 
 
 if __name__ == "__main__":
@@ -203,14 +211,14 @@ if __name__ == "__main__":
                         + ". Not compatible with running means or subsampling.")
     parser.add_argument("-c", "--columns",default=None,
                         help="Specify particular data columns to plot. Separate"
-                        " values with commas. 0th column is x, so don't specify"
+                        " values with semicolon. 0th column is x, so don't specify"
                         " 0. If not specified, will only plot first data column."
                         "TODO")
-    parser.add_argument("-c", "--columns",default=None,
-                        help="Specify particular data columns to plot. Separate"
-                        " values with commas. 0th column is x, so don't specify"
-                        " 0. If not specified, will only plot first data column."
-                        "TODO")
+    parser.add_argument("-g", "--group", default=0, type=int,
+                        help="If specified, break the data up into this many "
+                        " groups to plot separately. E.g., a datafile might"
+                        " be 100 lines long but you may want to plot 5 lines of"
+                        " 20. Then use an argument of 5.")
 
     # DATA PROCESSING
     parser.add_argument("-m", "--mean", default=0,
