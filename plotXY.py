@@ -18,9 +18,10 @@
 import os
 import sys
 import numpy as np
+from pymbar import timeseries
+from functools import reduce
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from pymbar import timeseries
 
 # ===========================================
 
@@ -73,11 +74,23 @@ def runningMean(y_mat, N, num_cols):
 
     z_mat = [] # subsampled y_mat
     for i in range(num_cols):
-        y = y_mat[:,i]
+        try:
+            y = y_mat[:,i] # normal data in np array(s)
+        except TypeError:  # data grouped as list of np arrays
+            y = y_mat[i]
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
     return z_mat
 
+def factorize(n):
+    """
+    Reference
+    ---------
+    https://tinyurl.com/ybmgaqdt
+
+    """
+    return sorted(set(reduce(list.__add__,
+           ([i, n//i] for i in range(1, int(pow(n, 0.5) + 1)) if n % i == 0))))
 
 def formatFig(ax1, plt, **kwargs):
     """
@@ -86,7 +99,14 @@ def formatFig(ax1, plt, **kwargs):
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
         legend=True
-    if opt['publish']:
+    if opt['group'] != 0:
+        print("VTL add legend details for grouped data")
+        print("VTL add legend details for grouped data")
+        tSize = 12
+        xSize = 8
+        ySize = 8
+        kSize = 8
+    elif opt['publish']:
         tSize = 12
         xSize = 8
         ySize = 8
@@ -111,12 +131,6 @@ def formatFig(ax1, plt, **kwargs):
     for ytick in ax1.get_yticklabels():
         ytick.set_fontsize(kSize)
 
-    ### Save figure.
-    if opt['publish']:
-        plt.savefig(opt['output'], bbox_inches='tight',dpi=300)
-    else:
-        plt.savefig(opt['output'], bbox_inches='tight')
-    plt.show()
 
 
 def xyPlot(**kwargs):
@@ -127,7 +141,7 @@ def xyPlot(**kwargs):
     filename = opt['input']
     uncertf = opt['uncert']
     doSubsample =  opt['subsample']
-    groupsize = opt['group']
+    num_groups = opt['group']
 
     if opt['mean'] != 0:
         runMean = True
@@ -143,17 +157,14 @@ def xyPlot(**kwargs):
     y_mat = data[:,1:]
     num_cols = y_mat.shape[1]
     if num_cols == 1: y_mat = y_mat.flatten()
-    if groupsize != 0:
+    if num_groups != 0:
         if num_cols != 1:
             sys.exit("ERROR: This script is not equipped to break input "
                      "data into groups with multiple data columns.")
         if doSubsample:
-            sys.exit("ERROR: This script is not equipped to subsample "
+            sys.exit("ERROR: This script is not yet equipped to subsample "
                      "along with breaking data into groups.")
-        if 'runMean' in locals():
-            sys.exit("ERROR: This script is not equipped to take a running "
-                     "mean along with breaking data into groups.")
-        y_mat = np.array_split(y_mat, groupsize) # LIST of subarrays, may not be equally split
+        y_mat = np.array_split(y_mat, num_groups) # LIST of subarrays, may not be equally split
         num_cols = len(y_mat)
     print("How many data series to plot: {}".format(num_cols))
 
@@ -167,35 +178,64 @@ def xyPlot(**kwargs):
 
 
     ### Initialize figure.
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    axes = plt.gca()
-#    axes.set_xlim([min(x)-0.2,max(x)+0.2])
-#    axes.set_ylim([-0.1,3])
     colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
+    num_plots = 1
+    if num_groups != 0:
+        factors = factorize(num_groups)
+        num_plots = int(input("\nInput with {} data points will be separated into {} "
+              "groups for plotting.\nDo you want to separate these groups into "
+              "separate subplots?\nType 0 for no, or type an integer for "
+              "the number of subplots desired.\nTo evenly distribute the lines, "
+              "use one of {}. ".format(len(x),num_groups,factors)))
+        lines_per_plot = int(num_groups/num_plots)
+
+    fig, axs = plt.subplots(1, num_plots, sharey=True)
+    if num_plots == 1:
+        curr_ax = axs
+    else:
+        idx = 0
+        curr_ax = axs[idx]
 
     ### Plot the data.
     for i in range(num_cols):
-        if doSubsample:
+        if num_groups != 0: # most specific case
+            y = y_mat[i]
+            x = np.arange(len(y))
+            if (num_plots != 0) and (i>0) and (i%lines_per_plot == 0):
+                idx += 1
+                print("Switching to new subplot...")
+                formatFig(curr_ax,plt,**opt)
+                curr_ax = axs[idx]
+        elif doSubsample:
             x = x_mat[i]
             y = y_mat[i]
         elif 'runMean' in locals():
             y = y_mat[i]
-        if groupsize != 0:
-            y = y_mat[i]
-            x = np.arange(len(y))
         elif num_cols == 1:
             y = y_mat
         else:
             y = y_mat[:,i]
         print(i, len(x), y.shape)
         if uncertf is not None: # UNTESTED as of 4/6/18
-            ax1.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=color[i])
+            curr_ax.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=color[i])
         else:
-            ax1.plot(x, y, lw=0.8, color=colors[i]) # thinner line
+            curr_ax.plot(x, y, lw=0.8, color=colors[i]) # thinner line
 
+    ### Format figure.
+#    axes = plt.gca()
+#    axes.set_xlim([min(x)-2,max(x)+2])
+#    axes.set_ylim([-0.1,3])
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
-    formatFig(ax1,plt,**opt)
+    if num_groups != 0:
+        plt.subplots_adjust(wspace=0.)
+    formatFig(curr_ax,plt,**opt)
+
+    ### Save figure.
+    if opt['publish']:
+        plt.savefig(opt['output'], bbox_inches='tight',dpi=300)
+    else:
+        plt.savefig(opt['output'], bbox_inches='tight')
+    plt.show()
 
 
 if __name__ == "__main__":
