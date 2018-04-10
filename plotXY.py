@@ -99,14 +99,7 @@ def formatFig(ax1, plt, **kwargs):
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
         legend=True
-    if opt['group'] != 0:
-        print("VTL add legend details for grouped data")
-        print("VTL add legend details for grouped data")
-        tSize = 12
-        xSize = 8
-        ySize = 8
-        kSize = 8
-    elif opt['publish']:
+    if opt['publish']:
         tSize = 12
         xSize = 8
         ySize = 8
@@ -164,6 +157,9 @@ def xyPlot(**kwargs):
         if doSubsample:
             sys.exit("ERROR: This script is not yet equipped to subsample "
                      "along with breaking data into groups.")
+        if opt['legend'] is not None:
+            print("WARNING: Input legend will be discarded. Grouped data will "
+                  "instead be labeled by group count.")
         y_mat = np.array_split(y_mat, num_groups) # LIST of subarrays, may not be equally split
         num_cols = len(y_mat)
     print("How many data series to plot: {}".format(num_cols))
@@ -188,12 +184,14 @@ def xyPlot(**kwargs):
               "the number of subplots desired.\nTo evenly distribute the lines, "
               "use one of {}. ".format(len(x),num_groups,factors)))
         lines_per_plot = int(num_groups/num_plots)
+        colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
 
     fig, axs = plt.subplots(1, num_plots, sharey=True)
     if num_plots == 1:
         curr_ax = axs
     else:
         idx = 0
+        opt['legend'] = ';'.join(str(i) for i in range(1,1+lines_per_plot))
         curr_ax = axs[idx]
 
     ### Plot the data.
@@ -201,25 +199,33 @@ def xyPlot(**kwargs):
         if num_groups != 0: # most specific case
             y = y_mat[i]
             x = np.arange(len(y))
+            c = colors[i%lines_per_plot]
             if (num_plots != 0) and (i>0) and (i%lines_per_plot == 0):
                 idx += 1
-                print("Switching to new subplot...")
+                # format the current subplot then get next legend ready
                 formatFig(curr_ax,plt,**opt)
+                opt['legend'] = ';'.join(str(i) for i in range(i+1,i+1+lines_per_plot))
+                # change to next subplot
+                print("Switching to new subplot...")
                 curr_ax = axs[idx]
         elif doSubsample:
-            x = x_mat[i]
             y = y_mat[i]
+            x = x_mat[i]
+            c = colors[i]
         elif 'runMean' in locals():
             y = y_mat[i]
+            c = colors[i]
         elif num_cols == 1:
             y = y_mat
+            c = colors[i]
         else:
             y = y_mat[:,i]
+            c = colors[i]
         print(i, len(x), y.shape)
         if uncertf is not None: # UNTESTED as of 4/6/18
-            curr_ax.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=color[i])
+            curr_ax.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=c)
         else:
-            curr_ax.plot(x, y, lw=0.8, color=colors[i]) # thinner line
+            curr_ax.plot(x, y, lw=0.8, color=c) # thinner line
 
     ### Format figure.
 #    axes = plt.gca()
@@ -274,8 +280,12 @@ if __name__ == "__main__":
                         help="Label for y data.")
     parser.add_argument("-t", "--title",default="",
                         help="Label for plot title.")
-    parser.add_argument("-l", "--legend",default=None,
-                        help="Add legend to data. Format input as data1;data2;...")
+    parser.add_argument("-l", "--legend", default=None, type=str,
+                        help="Add legend to data. Format input as "
+                        "\"data1;data2;...\" with quotes. User-supplied legend"
+                        " is currently not compatible with grouped data. If "
+                        "--group is specified, use a placeholder (e.g., x) "
+                        "here to label by count of group.")
     parser.add_argument("-o", "--output",
                         help="Name of the output figure.")
     parser.add_argument("--publish", action="store_true",default=False,
@@ -283,4 +293,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     opt = vars(args)
+    print(opt['legend'])
     xyPlot(**opt)
