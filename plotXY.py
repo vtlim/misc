@@ -25,24 +25,67 @@ import matplotlib as mpl
 
 # ===========================================
 
+def find_num_cols(y_mat):
+    """
+    For use in subSample or runningMean functions.
+    """
+    # list of np arrays
+    if type(y_mat) is list:
+        if len(y_mat[0]) > 1:
+            num_cols = len(y_mat)
+        else:
+            num_cols = 1
+    # 1D np array
+    elif type(y_mat) is np.ndarray:
+        if len(y_mat.shape) == 2:
+            num_cols = y_mat.shape[1]
+        else:
+            num_cols = 1
+
+    return num_cols
 
 
-def subSample(x, y_mat, num_cols):
+def subSample(x, y_mat, num_cols=None):
     """
     Parameters
     ----------
-    x
-    y_mat
-    num_cols
+    x : numpy array
+        1-dimensional array with x-data, such as timestep.
+    y_mat : can take various forms:
+        - list of numpy arrays, such as grouping 1-column data into smaller data series
+        - 1D numpy array, such as taking running mean of 1-column data
+        - multidimensional numpy array, if data has many columns
+    num_cols : int (opt.)
+        Number of data series for the input y_mat. Use this value to loop
+        over the input data, since it can be formatted as 1- or N-dimensional
+        list or numpy array. If num_cols not specified, the value will be
+        extracted from input data using find_num_cols function.
 
     Returns
     -------
+    x_mat : list
+        multi-dimensional array of the same shape as z_mat
+    z_mat : list
+        multi-dimesional array in which z_mat[i][j] is the jth value in the ith data series.
 
     """
     x_mat = []
     z_mat = [] # subsampled y_mat
+
+    if num_cols is None:
+        num_cols = find_num_cols(y_mat)
+
     for i in range(num_cols):
-        y = y_mat[:,i]
+        # list of np arrays
+        if type(y_mat) is list and len(y_mat[0]) > 1:
+            y = y_mat[i]
+        # 1D np array
+        elif type(y_mat) is np.ndarray and len(y_mat.shape) == 1:
+            y = y_mat
+        # multidimensional np array
+        else:
+            y = y_mat[:,i]
+
         # Compute correlation times.
         g = timeseries.statisticalInefficiency(y)
         indices = timeseries.subsampleCorrelatedData(y, g)
@@ -51,36 +94,64 @@ def subSample(x, y_mat, num_cols):
         x_sub = x[indices]
         z_mat.append(y_sub)
         x_mat.append(x_sub)
+
         print("\nLength of original timeseries data: %d\nLength of subsampled\
  timeseries data: %d" % (len(y), len(y_sub)) )
     return x_mat, z_mat
 
 
-def runningMean(y_mat, N, num_cols):
+def runningMean(y_mat, N, num_cols=None):
     """
     Parameters
     ----------
-    y_mat
-    N
-    num_cols
+    y_mat : can take various forms:
+        - list of numpy arrays, such as grouping 1-column data into smaller data series
+        - 1D numpy array, such as taking running mean of 1-column data
+        - multidimensional numpy array, if data has many columns
+    N : int
+        Bin width over to take the moving average.
+    num_cols : int (opt.)
+        Number of data series for the input y_mat. Use this value to loop
+        over the input data, since it can be formatted as 1- or N-dimensional
+        list or numpy array. If num_cols not specified, the value will be
+        extracted from input data using find_num_cols function.
 
     Returns
     -------
+    x : list
+        1-dimensional list of the same length of the moving average data
+    z_mat : list
+        multi-dimesional array in which z_mat[i][j] is the jth value in the ith data series.
 
     Reference
     ---------
     http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
     """
 
-    z_mat = [] # subsampled y_mat
+    z_mat = [] # for subsampled y_mat
+
+    if num_cols is None:
+        num_cols = find_num_cols(y_mat)
+
     for i in range(num_cols):
-        try:
-            y = y_mat[:,i] # normal data in np array(s)
-        except TypeError:  # data grouped as list of np arrays
+        # list of np arrays
+        if type(y_mat) is list and len(y_mat[0]) > 1:
             y = y_mat[i]
+        # 1D np array
+        elif type(y_mat) is np.ndarray and len(y_mat.shape) == 1:
+            y = y_mat
+        # multidimensional np array
+        else:
+            y = y_mat[:,i]
+
+        # calculate running mean
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
-    return z_mat
+
+    # x may not directly match with y bc of running mean
+    x = np.asarray(range(len(z_mat[0])),dtype=np.float32)
+
+    return x, z_mat
 
 def factorize(n):
     """
@@ -141,6 +212,8 @@ def xyPlot(**kwargs):
         runLength = int(opt['mean'])
     if opt['columns'] is not None:
         cols = list(map(int,opt['columns'].split(';')))
+    if doSubsample and 'runMean' in locals():
+        sys.exit("You can subsample data or take the running average, but not both.")
 
     ### Read in data.
     data = np.loadtxt(filename)
@@ -148,39 +221,39 @@ def xyPlot(**kwargs):
         uncerts = np.loadtxt(uncertf)
     x = data[:,0]
     y_mat = data[:,1:]
-    num_cols = y_mat.shape[1]
+    num_cols = y_mat.shape[1] # how many columns in orig data set
     if num_cols == 1: y_mat = y_mat.flatten()
+
+    ### If data is broken up for subplots, only works for single column data.
     if num_groups != 0:
         if num_cols != 1:
             sys.exit("ERROR: This script is not equipped to break input "
                      "data into groups with multiple data columns.")
-        if doSubsample:
-            sys.exit("ERROR: This script is not yet equipped to subsample "
-                     "along with breaking data into groups.")
         if opt['legend'] is not None:
             print("WARNING: Input legend will be discarded. Grouped data will "
                   "instead be labeled by group count.")
         y_mat = np.array_split(y_mat, num_groups) # LIST of subarrays, may not be equally split
-        num_cols = len(y_mat)
+        num_cols = len(y_mat) # actually is number of groups split up from the 1 column
     print("How many data series to plot: {}".format(num_cols))
 
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample:
         x_mat, y_mat = subSample(x,y_mat,num_cols)
-    elif 'runMean' in locals():
-        y_mat = runningMean(y_mat,runLength,num_cols)
-        # x may not directly match with y bc of running mean
-        x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
+    elif 'runMean' in locals(): # if False, runMean variable does not exist
+        x, y_mat = runningMean(y_mat,runLength,num_cols)
+        x = 0.002*x
 
 
     ### Initialize figure.
-    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
+    #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
+    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols+5)) # colors for plot
+
     num_plots = 1
     if num_groups != 0:
         factors = factorize(num_groups)
-        num_plots = int(input("\nInput with {} data points will be separated into {} "
-              "groups for plotting.\nDo you want to separate these groups into "
-              "separate subplots?\nType 0 for no, or type an integer for "
+        num_plots = int(input("\nInput with {} data points will be separated "
+              "into {} groups for plotting.\nDo you want to separate these "
+              "groups separate subplots?\nType 0 for no, or type an integer for "
               "the number of subplots desired.\nTo evenly distribute the lines, "
               "use one of {}. ".format(len(x),num_groups,factors)))
         lines_per_plot = int(num_groups/num_plots)
@@ -293,5 +366,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     opt = vars(args)
-    print(opt['legend'])
     xyPlot(**opt)
