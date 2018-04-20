@@ -4,16 +4,21 @@
 #   Options include plotting specific columns, separating data to subplots,
 #   subsampling data, taking running mean over data, and plotting alongside
 #   uncertainty values from another data file.
+# This script can also be imported for subsampling in other scripts/plots.
+#   - sys.path.insert(0,'/DFS-L/DATA/mobley/limvt/analysis')
+#   - import plotXY
+#   - plotXY.runningMean(ydata, N)
+#
+# By: Victoria T. Lim
+#
+# TODO:
+#   - Write documentation
+#   - Plot specific columns only
 #
 # If combining data together from multiple files, Google Sheets can help.
 #   Then copy from sheets into vim window.
 #   Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
 #
-# By: Victoria T. Lim
-#
-# TODO:
-#  - Write documentation
-#  - Plot specific columns only
 
 import os
 import sys
@@ -118,10 +123,8 @@ def runningMean(y_mat, N, num_cols=None):
 
     Returns
     -------
-    x : list
-        1-dimensional list of the same length of the moving average data
     z_mat : list
-        multi-dimesional array in which z_mat[i][j] is the jth value in the ith data series.
+        multi-dimensional array in which z_mat[i][j] is the jth value in the ith data series.
 
     Reference
     ---------
@@ -148,10 +151,8 @@ def runningMean(y_mat, N, num_cols=None):
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
 
-    # x may not directly match with y bc of running mean
-    x = np.asarray(range(len(z_mat[0])),dtype=np.float32)
-
-    return x, z_mat
+    if num_cols == 1: z_mat = z_mat[0]
+    return z_mat
 
 def factorize(n):
     """
@@ -240,8 +241,12 @@ def xyPlot(**kwargs):
     if doSubsample:
         x_mat, y_mat = subSample(x,y_mat,num_cols)
     elif 'runMean' in locals(): # if False, runMean variable does not exist
-        x, y_mat = runningMean(y_mat,runLength,num_cols)
-        x = 0.002*x
+        y_mat = runningMean(y_mat,runLength,num_cols)
+        # x may not directly match with y bc of running mean
+        try:
+            x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
+        except TypeError:
+            x = 0.002*np.asarray(range(len(y_mat)),dtype=np.float32)
 
 
     ### Initialize figure.
@@ -253,9 +258,9 @@ def xyPlot(**kwargs):
         factors = factorize(num_groups)
         num_plots = int(input("\nInput with {} data points will be separated "
               "into {} groups for plotting.\nDo you want to separate these "
-              "groups separate subplots?\nType 0 for no, or type an integer for "
-              "the number of subplots desired.\nTo evenly distribute the lines, "
-              "use one of {}. ".format(len(x),num_groups,factors)))
+              "groups into separate subplots?\nType 0 for no, or type an "
+              "integer for the number of subplots desired.\nTo evenly distribute "
+              "the lines, use one of {}. ".format(len(x),num_groups,factors)))
         lines_per_plot = int(num_groups/num_plots)
         colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
 
@@ -281,15 +286,15 @@ def xyPlot(**kwargs):
                 # change to next subplot
                 print("Switching to new subplot...")
                 curr_ax = axs[idx]
+        elif num_cols == 1:
+            y = y_mat
+            c = colors[i]
         elif doSubsample:
             y = y_mat[i]
             x = x_mat[i]
             c = colors[i]
         elif 'runMean' in locals():
             y = y_mat[i]
-            c = colors[i]
-        elif num_cols == 1:
-            y = y_mat
             c = colors[i]
         else:
             y = y_mat[:,i]
