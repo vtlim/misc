@@ -2,12 +2,12 @@
 
 # Generate XY line plots from text data file.
 #   Options include plotting specific columns, separating data to subplots,
-#   subsampling data, taking running mean over data, and plotting alongside
+#   subsampling data, taking moving average over data, and plotting alongside
 #   uncertainty values from another data file.
 # This script can also be imported for subsampling in other scripts/plots.
 #   - sys.path.insert(0,'/DFS-L/DATA/mobley/limvt/analysis')
 #   - import plotXY
-#   - plotXY.runningMean(ydata, N)
+#   - plotXY.moving_average(ydata, N)
 #
 # By: Victoria T. Lim
 #
@@ -32,7 +32,7 @@ import matplotlib as mpl
 
 def find_num_cols(y_mat):
     """
-    For use in subSample or runningMean functions.
+    For use in subsample or moving_average functions.
     """
     # list of np arrays
     if type(y_mat) is list:
@@ -50,7 +50,7 @@ def find_num_cols(y_mat):
     return num_cols
 
 
-def subSample(x, y_mat, num_cols=None):
+def subsample(x, y_mat, num_cols=None):
     """
     Parameters
     ----------
@@ -58,7 +58,7 @@ def subSample(x, y_mat, num_cols=None):
         1-dimensional array with x-data, such as timestep.
     y_mat : can take various forms:
         - list of numpy arrays, such as grouping 1-column data into smaller data series
-        - 1D numpy array, such as taking running mean of 1-column data
+        - 1D numpy array, such as subsampling 1-column data
         - multidimensional numpy array, if data has many columns
     num_cols : int (opt.)
         Number of data series for the input y_mat. Use this value to loop
@@ -105,13 +105,13 @@ def subSample(x, y_mat, num_cols=None):
     return x_mat, z_mat
 
 
-def runningMean(y_mat, N, num_cols=None):
+def moving_average(y_mat, N, num_cols=None):
     """
     Parameters
     ----------
     y_mat : can take various forms:
         - list of numpy arrays, such as grouping 1-column data into smaller data series
-        - 1D numpy array, such as taking running mean of 1-column data
+        - 1D numpy array, such as taking moving average of 1-column data
         - multidimensional numpy array, if data has many columns
     N : int
         Bin width over to take the moving average.
@@ -147,7 +147,7 @@ def runningMean(y_mat, N, num_cols=None):
         else:
             y = y_mat[:,i]
 
-        # calculate running mean
+        # calculate moving average
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
 
@@ -209,11 +209,11 @@ def xyPlot(**kwargs):
     num_groups = opt['group']
 
     if opt['mean'] != 0:
-        runMean = True
-        runLength = int(opt['mean'])
+        doMean = True
+        mean_period = int(opt['mean'])
     if opt['columns'] is not None:
         cols = list(map(int,opt['columns'].split(';')))
-    if doSubsample and 'runMean' in locals():
+    if doSubsample and 'doMean' in locals():
         sys.exit("You can subsample data or take the running average, but not both.")
 
     ### Read in data.
@@ -239,10 +239,10 @@ def xyPlot(**kwargs):
 
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample:
-        x_mat, y_mat = subSample(x,y_mat,num_cols)
-    elif 'runMean' in locals(): # if False, runMean variable does not exist
-        y_mat = runningMean(y_mat,runLength,num_cols)
-        # x may not directly match with y bc of running mean
+        x_mat, y_mat = subsample(x,y_mat,num_cols)
+    elif 'doMean' in locals(): # if False, doMean variable does not exist
+        y_mat = moving_average(y_mat,mean_period,num_cols)
+        # x may not directly match with y bc of moving average
         try:
             x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
         except TypeError:
@@ -293,7 +293,7 @@ def xyPlot(**kwargs):
             y = y_mat[i]
             x = x_mat[i]
             c = colors[i]
-        elif 'runMean' in locals():
+        elif 'doMean' in locals():
             y = y_mat[i]
             c = colors[i]
         else:
@@ -332,7 +332,7 @@ if __name__ == "__main__":
                         "to be some heading line and is NOT read in.")
     parser.add_argument("-u", "--uncert",default=None,
                         help="Name of the file with corresponding uncertainties"
-                        + ". Not compatible with running means or subsampling.")
+                        + ". Not compatible with moving averages or subsampling.")
     parser.add_argument("-c", "--columns",default=None,
                         help="Specify particular data columns to plot. Separate"
                         " values with semicolon. 0th column is x, so don't specify"
@@ -346,7 +346,7 @@ if __name__ == "__main__":
 
     # DATA PROCESSING
     parser.add_argument("-m", "--mean", default=0,
-                        help="If not default=0, take running means over the "
+                        help="If not default=0, take moving averages over the "
                         + "specified number of data points for each column.")
     parser.add_argument("-s", "--subsample", action="store_true",default=False,
                         help="Subsample y data based on correlation times.")
