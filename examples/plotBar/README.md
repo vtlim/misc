@@ -1,5 +1,6 @@
 
-For specific plot customizations (e.g., grid), see the git version of this script at the same time of this example.
+# Examples for `plotBar.py`
+For specific plot customizations (e.g., grid), see the git version of the `plotBar.py` script at the same time of the uploaded example.
 
 Git commit: 142c069
 1. `python plotBar.py -i barplot1.dat -o output1.png`
