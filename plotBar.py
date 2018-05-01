@@ -107,24 +107,25 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 #    if len(llist) == len(xlist):
 #        plt.xticks(xlist, llist)
 
-#    # use labels on the y ticks -- if horiz, use xlist
-#    if len(llist) == len(xlist):
-#        plt.yticks(xlist, llist)
+    # use labels on the y ticks -- if horiz, use xlist
+    if len(llist) == len(xlist):
+        plt.yticks(xlist, llist)
 
-    plt.ylim(330, 362)
+#    plt.ylim(330, 362)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
 #    plt.grid()
+    plt.gca().xaxis.grid(True)  # only show vertical grid
 
-    # show horizontal grid and don't show xticks or xticklabels
-    plt.gca().yaxis.grid(True)  # only show horizontal grid
-    plt.tick_params(
-        axis='x',          # change settings for x-axis
-        which='both',      # change settings for both major and minor ticks
-        bottom='off',      # turn off ticks along the bottom edge
-        top='off',         # turn off ticks along the top edge
-        labelbottom='off') # turn off tick labels along the bottom edge
+#    # show horizontal grid and don't show xticks or xticklabels
+#    plt.gca().yaxis.grid(True)  # only show horizontal grid
+#    plt.tick_params(
+#        axis='x',          # change settings for x-axis
+#        which='both',      # change settings for both major and minor ticks
+#        bottom='off',      # turn off ticks along the bottom edge
+#        top='off',         # turn off ticks along the top edge
+#        labelbottom='off') # turn off tick labels along the bottom edge
 
     plt.savefig(figname,bbox_inches='tight')
     plt.show()
@@ -142,9 +143,9 @@ if __name__ == "__main__":
              "TODO add features for plot labels in 3rd column "+
              "and stdev in 4th column.")
     parser.add_argument("-x", "--xlabel",default="",
-        help="Label for x data.")
+        help="Label for x data. Use single quotes if passing in Latex.")
     parser.add_argument("-y", "--ylabel",default="",
-        help="Label for y data.")
+        help="Label for y data. Use single quotes if passing in Latex.")
     parser.add_argument("-o", "--output",
         help="Name of the output figure.", default='barplot.png')
     parser.add_argument("--group",action="store_true",default=False,

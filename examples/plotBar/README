@@ -1,5 +1,9 @@
 
 For specific plot customizations (e.g., grid), see the git version of this script at the same time of this example.
 
+Git commit: 142c069
 1. `python plotBar.py -i barplot1.dat -o output1.png`
-2. `python plotBar.py -i barplot2.dat --group -y 'sum of angles around N (deg.) -o output2.png'
+2. `python plotBar.py -i barplot2.dat --group -y 'sum of angles around N (deg.) -o output2.png`
+
+Git commit: 
+3. `python plotBar.py -i barplot3.dat --horiz -x '$\Delta\Delta$G (kcal/mol)' -o output3.png`

@@ -1,0 +1,7 @@
+# version: Apr 30 2018
+0;   0.1089;    expt
+-1; -5.0869;    FEP: original
+-2; -6.3582;    FEP: restrain POPC 149
+-3; -0.3123;    FEP: from equil Ser
+-4; -6.7172;    FEP: restrain R211
+
