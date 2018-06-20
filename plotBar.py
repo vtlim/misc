@@ -72,7 +72,10 @@ def plot_bar_group(xlist, ylist, xlabel='', ylabel='', horiz=False):
     plt.xlabel(xlabel,fontsize=18)
 
     for xlist, ylist in zip(grpX, grpY):
-        plt.bar(xlist, ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
+        if horiz:
+            plt.barh(xlist,ylist,align='center',height=1.0,edgecolor='white',ecolor='k')
+        else:
+            plt.bar(xlist,ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
 
     return plt
 
@@ -88,9 +91,9 @@ def plot_bar(xlist, ylist, xlabel='', ylabel='', horiz=False):
     plt.ylabel(ylabel,fontsize=16)
     plt.xlabel(xlabel,fontsize=16)
     if horiz:
-        plt.barh(xlist, ylist,align='center',edgecolor='white',ecolor='k',zorder=3)
+        plt.barh(xlist,ylist,align='center',edgecolor='white',ecolor='k',zorder=3)
     else:
-        plt.bar(xlist, ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
+        plt.bar(xlist,ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
     return plt
 
 
@@ -103,6 +106,7 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
     ----------
 
     """
+
 #    # use labels on the x ticks
 #    if len(llist) == len(xlist):
 #        plt.xticks(xlist, llist)
@@ -115,8 +119,14 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
+    # ===== GRID AND TICK OPTIONS ===== #
 #    plt.grid()
+
     plt.gca().xaxis.grid(True)  # only show vertical grid
+    plt.tick_params(
+        axis='y',          # change settings for y-axis
+        which='both',      # change settings for both major and minor ticks
+        left='off')        # turn off ticks along the bottom edge
 
 #    # show horizontal grid and don't show xticks or xticklabels
 #    plt.gca().yaxis.grid(True)  # only show horizontal grid
@@ -151,7 +161,7 @@ if __name__ == "__main__":
     parser.add_argument("--group",action="store_true",default=False,
         help="Cluster bars by x-index. Consecutive x's are in "+
         "same group. Non-consecutive x's are in separate groups. "+
-        "E.g., cluster bars for x=1,2,3; separate from x=4,5")
+        "E.g., the cluster for x=1,2,3 is separated from x=5,6")
     parser.add_argument("--horiz",action="store_true",default=False,
         help="Generate bar plot with horizontal bars. Default is vertical.")
 

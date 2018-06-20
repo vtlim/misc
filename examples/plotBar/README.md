@@ -8,3 +8,6 @@ Git commit: 142c069
 
 Git commit: c128b23
 3. `python plotBar.py -i barplot3.dat --horiz -x '$\Delta\Delta$G (kcal/mol)' -o output3.png`
+
+Git commit:
+4. `python plotBar.py -i barplot4.dat --horiz --group -x '$\Delta\Delta$G (kcal/mol)' -o output4.png`
