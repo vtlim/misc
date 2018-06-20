@@ -97,6 +97,30 @@ def plot_bar(xlist, ylist, xlabel='', ylabel='', horiz=False):
     return plt
 
 
+def plot_line(xlist, ylist, xlabel='', ylabel='', horiz=False):
+    """
+
+
+    Parameters
+    ----------
+
+    """
+    fig = plt.figure()
+    plt.ylabel(ylabel,fontsize=16)
+    plt.xlabel(xlabel,fontsize=16)
+
+    # define colors, either a single one, or a list
+    cs = ['orange','g','b','m','b','b']
+    #cs = 'k'
+
+    if horiz:
+        print("not supported yet (TODO)")
+    else:
+        plt.vlines(xlist, np.zeros(len(xlist)), ylist, cs, linestyles='dashed')
+        plt.scatter(xlist, ylist, c=cs)
+    return plt
+
+
 def finalize_and_save(plt, xlist, ylist, llist, figname):
     """
     Customize plot with grid, labels, and/or other features.
@@ -107,13 +131,13 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 
     """
 
-#    # use labels on the x ticks
-#    if len(llist) == len(xlist):
-#        plt.xticks(xlist, llist)
-
-    # use labels on the y ticks -- if horiz, use xlist
+    # use labels on the x ticks
     if len(llist) == len(xlist):
-        plt.yticks(xlist, llist)
+        plt.xticks(xlist, llist, rotation=-40, horizontalalignment='left') # default align is center
+
+#    # use labels on the y ticks -- if horiz, use xlist
+#    if len(llist) == len(xlist):
+#        plt.yticks(xlist, llist)
 
 #    plt.ylim(330, 362)
     plt.xticks(fontsize=14)
@@ -122,14 +146,14 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
     # ===== GRID AND TICK OPTIONS ===== #
 #    plt.grid()
 
-    plt.gca().xaxis.grid(True)  # only show vertical grid
-    plt.tick_params(
-        axis='y',          # change settings for y-axis
-        which='both',      # change settings for both major and minor ticks
-        left='off')        # turn off ticks along the bottom edge
+#    plt.gca().xaxis.grid(True)  # only show vertical grid
+#    plt.tick_params(
+#        axis='y',          # change settings for y-axis
+#        which='both',      # change settings for both major and minor ticks
+#        left='off')        # turn off ticks along the bottom edge
 
 #    # show horizontal grid and don't show xticks or xticklabels
-#    plt.gca().yaxis.grid(True)  # only show horizontal grid
+    plt.gca().yaxis.grid(True)  # only show horizontal grid
 #    plt.tick_params(
 #        axis='x',          # change settings for x-axis
 #        which='both',      # change settings for both major and minor ticks
@@ -148,20 +172,27 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    # input data
     parser.add_argument("-i", "--infile",
         help="Input file with x in 1st column, y in 2nd column."+
              "TODO add features for plot labels in 3rd column "+
              "and stdev in 4th column.")
+
+    # plot labeling
     parser.add_argument("-x", "--xlabel",default="",
         help="Label for x data. Use single quotes if passing in Latex.")
     parser.add_argument("-y", "--ylabel",default="",
         help="Label for y data. Use single quotes if passing in Latex.")
     parser.add_argument("-o", "--output",
         help="Name of the output figure.", default='barplot.png')
+
+    # plot type
     parser.add_argument("--group",action="store_true",default=False,
         help="Cluster bars by x-index. Consecutive x's are in "+
         "same group. Non-consecutive x's are in separate groups. "+
         "E.g., the cluster for x=1,2,3 is separated from x=5,6")
+    parser.add_argument("--line",action="store_true",default=False,
+        help="Generate line plots in the style of bar plots.")
     parser.add_argument("--horiz",action="store_true",default=False,
         help="Generate bar plot with horizontal bars. Default is vertical.")
 
@@ -174,6 +205,8 @@ if __name__ == "__main__":
     xlist, ylist, llist = parse_file(opt['infile'])
     if opt['group']:
         plt = plot_bar_group(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+    elif opt['line']:
+        plt = plot_line(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     else:
         plt = plot_bar(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     finalize_and_save(plt, xlist, ylist, llist, opt['output'])

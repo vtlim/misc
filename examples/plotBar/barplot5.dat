@@ -1,0 +1,8 @@
+# version: Jun 20 2018
+1;  1.2713;    noGBI, restrain POPC
+2;  1.6303;    noGBI, Arg str + restrain R211
+3; -3.3667;    noGBI, Ser str + restrain R211
+4; -4.7746;    noGBI, Ser str
+
+6; -3.7857;    taut1, Ser str + restrain R211
+7;  1.0922;    taut2, Ser str + restrain R211
