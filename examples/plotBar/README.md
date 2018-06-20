@@ -12,5 +12,5 @@ Git commit: c128b23
 Git commit: db33b0c  
 4. `python plotBar.py -i barplot4.dat --horiz --group -x '$\Delta\Delta$G (kcal/mol)' -o output4.png`
 
-Git comit:  
+Git comit: dcddd43  
 5. `python plotBar.py -i barplot5.dat --line -y 'change in $\Delta$G (kcal/mol)' -o output5.png`
