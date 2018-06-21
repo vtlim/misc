@@ -13,7 +13,6 @@
 #
 # TODO:
 #   - Write documentation
-#   - Plot specific columns only
 #
 # If combining data together from multiple files, Google Sheets can help.
 #   Then copy from sheets into vim window.
@@ -211,17 +210,21 @@ def xyPlot(**kwargs):
     if opt['mean'] != 0:
         doMean = True
         mean_period = int(opt['mean'])
-    if opt['columns'] is not None:
-        cols = list(map(int,opt['columns'].split(';')))
     if doSubsample and 'doMean' in locals():
         sys.exit("You can subsample data or take the running average, but not both.")
 
-    ### Read in data.
+    ### Read in data from file.
     data = np.loadtxt(filename)
     if uncertf is not None:
         uncerts = np.loadtxt(uncertf)
     x = data[:,0]
-    y_mat = data[:,1:]
+
+    ### Get the y-columns.
+    if opt['columns'] is not None:
+        cols = list(map(int,opt['columns'].split(';')))
+        y_mat = np.asarray([data[:,i] for i in cols]).T
+    else:
+        y_mat = data[:,1:]
     num_cols = y_mat.shape[1] # how many columns in orig data set
     if num_cols == 1: y_mat = y_mat.flatten()
 
@@ -251,7 +254,7 @@ def xyPlot(**kwargs):
 
     ### Initialize figure.
     #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
-    colors = mpl.cm.tab20(np.linspace(0, 1, num_cols+5)) # colors for plot
+    colors = mpl.cm.tab20(np.linspace(0, 1, 10)) # colors for plot
 
     num_plots = 1
     if num_groups != 0:
@@ -306,9 +309,9 @@ def xyPlot(**kwargs):
             curr_ax.plot(x, y, lw=0.8, color=c) # thinner line
 
     ### Format figure.
-#    axes = plt.gca()
+    axes = plt.gca()
 #    axes.set_xlim([min(x)-2,max(x)+2])
-#    axes.set_ylim([-0.1,3])
+    axes.set_ylim([-0.1,3])
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
@@ -335,9 +338,9 @@ if __name__ == "__main__":
                         + ". Not compatible with moving averages or subsampling.")
     parser.add_argument("-c", "--columns",default=None,
                         help="Specify particular data columns to plot. Separate"
-                        " values with semicolon. 0th column is x, so don't specify"
-                        " 0. If not specified, will only plot first data column."
-                        "TODO")
+                        " values with semicolon and place in quotes (bc bash). "
+                        "Ex. \"2;3;4\". The 0th column is x, so don't specify "
+                        "0. If not specified, will only plot all data columns.")
     parser.add_argument("-g", "--group", default=0, type=int,
                         help="If specified, break the data up into this many "
                         " groups to plot separately. E.g., a datafile might"
