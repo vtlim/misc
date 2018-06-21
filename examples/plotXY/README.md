@@ -2,7 +2,7 @@
 # Examples for `plotXY.py`
 For specific plot customizations (e.g., grid), see the git version of the `plotXY.py` script at the same time of the uploaded example.
 
-Git commit:   
+Git commit: ad57548    
 
 1. Basic plot
     * `python plotXY.py -i xy1.dat -x 'frame number' -y 'RMSD (A)' -l 'backbone;S1;S2;S3;S4' -o output1.png`
