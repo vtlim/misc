@@ -311,7 +311,7 @@ def xyPlot(**kwargs):
     ### Format figure.
     axes = plt.gca()
 #    axes.set_xlim([min(x)-2,max(x)+2])
-    axes.set_ylim([-0.1,3])
+#    axes.set_ylim([-0.1,3])
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
