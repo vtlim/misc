@@ -340,7 +340,7 @@ if __name__ == "__main__":
                         help="Specify particular data columns to plot. Separate"
                         " values with semicolon and place in quotes (bc bash). "
                         "Ex. \"2;3;4\". The 0th column is x, so don't specify "
-                        "0. If not specified, will only plot all data columns.")
+                        "0. If not specified, will plot all data columns.")
     parser.add_argument("-g", "--group", default=0, type=int,
                         help="If specified, break the data up into this many "
                         " groups to plot separately. E.g., a datafile might"
@@ -348,7 +348,7 @@ if __name__ == "__main__":
                         " 20. Then use an argument of 5.")
 
     # DATA PROCESSING
-    parser.add_argument("-m", "--mean", default=0,
+    parser.add_argument("-m", "--mean", default=0, type=int,
                         help="If not default=0, take moving averages over the "
                         + "specified number of data points for each column.")
     parser.add_argument("-s", "--subsample", action="store_true",default=False,
