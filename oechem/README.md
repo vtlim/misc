@@ -10,7 +10,7 @@ Various scripts related to OpenEye python toolkits.
    example: `python combineSDF.py -i 01_setup/initCoords/ -o fromVMD.sdf`
 
 * `plotMultSDF.py` - similar to plotSDF.py but can plot multiple lines from multiple SDF files.  
-   example: `python plotSDF.py -i hf.sdf -t 'QM Turbomole Final Opt. Energy (Har) HF/6-31G*'`
+   example: `python plotMultSDF.py -i plot.in -o results_vac.eps`
 
 * `plotSDF.py` - plots data from a particular SD tag from an SDF file with multiple conformers.  
-   example: `python plotMultSDF.py -i plot.in -o results_vac.eps`
+   example: `python plotSDF.py -i hf.sdf -t 'QM Turbomole Final Opt. Energy (Har) HF/6-31G*'`
