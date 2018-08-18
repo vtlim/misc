@@ -26,7 +26,12 @@ def extractXY(fname, tag):
     for mol in ifs.GetOEMols():
         for j, conf in enumerate( mol.GetConfs() ):
             xlist.append(int(mol.GetTitle()))
-            ylist.append(float(oechem.OEGetSDData(conf, tag)))
+            try:
+                ylist.append(float(oechem.OEGetSDData(conf, tag)))
+            except ValueError as e:
+                print("Missing tag data for mol {}, conf {}! Skipping.".format(mol.GetTitle(),j))
+                print(e)
+                xlist.pop()
 
     ### convert to numpy array, take relative e, convert to kcal/mol
     ylist = np.array(ylist)
@@ -70,9 +75,9 @@ def plotMultSDF(wholedict, figname,verbose):
     for i, (xs, ys) in enumerate(zip(xarray,yarray)):
         plt.plot(xs,ys,lw=0.8,color=colors[i],label=labels[i])
 
-    xvtl = [0,180]
-    yvtl = [0.,-0.4727]
-    plt.scatter(xvtl, yvtl, s=5.5,color='black', label='explicit waters')
+#    xvtl = [0,180]
+#    yvtl = [0.,-0.4727]
+#    plt.scatter(xvtl, yvtl, s=5.5,color='black', label='explicit waters')
 
 
     plt.ylim(-2.0,16)
