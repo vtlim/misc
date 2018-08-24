@@ -27,7 +27,7 @@ def column_avg(**kwargs):
     if opt['output']:
         with open(filename, 'a') as f:
             f.write("# Avgs: {}\n".format(avgs))
-            f.write("# Stds: {}".format(stds))
+            f.write("# Stds: {}\n".format(stds))
 
 
 if __name__ == "__main__":
