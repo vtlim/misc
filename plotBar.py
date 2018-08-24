@@ -31,27 +31,39 @@ def parse_file(infile):
             llist = [i.strip() for i in listdata[2]]
         except IndexError:
             llist = []
+        try:
+            elist = [float(i) for i in listdata[3]]
+        except IndexError:
+            elist = []
 
-    return xlist, ylist, llist
+    return xlist, ylist, llist, elist
 
-def plot_bar_group(xlist, ylist, xlabel='', ylabel='', horiz=False):
+def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     """
-    Generating the bar plot in small groups at a time gives the members
-        of a given group different colors.
-    For the same input of `plot_bar` and `plot_bar_group`, the output plots are
-        mostly the same with the only differences of figure size (if specified)
+    Generate the bar plot in small groups at a time. Each bar of a group
+        has a different color (e.g., blue yellow green in a group).
+    If same input is fed to `plot_bar` and `plot_bar_group`, the output plots are
+        mostly same with the only differences of figure size (if specified)
         and the colors.
 
 
     Parameters
     ----------
+    xlist
+    ylist
+    xlabel
+    ylabel
+    horiz
 
     """
 
-    refx = -5000
-    grpX = [[]] # list of lists for grouped bar plot
+    refx = -5000  # some start int for ref group
+    count = 0     # define for elist in case empty
+    grpX = [[]]   # list of lists for grouped bar plot
     grpY = [[]]
+    grpE = [[]]
     for x, y in zip(xlist,ylist):
+
         # new group if x value is 2+ integers apart
         if abs(x-refx)>1:
             idx = 0
@@ -60,30 +72,48 @@ def plot_bar_group(xlist, ylist, xlabel='', ylabel='', horiz=False):
         elif abs(x-refx)==1:
             idx+=1
             refx = x
+
         # add data into previously defined group
         try:
             grpX[idx].append(x)
             grpY[idx].append(y)
+            if len(elist) != 0:
+                grpE[idx].append(elist[count])
         # define new group (sublist) and add data
         except IndexError as e:
             grpX.append([])
             grpY.append([])
             grpX[idx].append(x)
             grpY[idx].append(y)
+            if len(elist) != 0:
+                grpE.append([])
+                grpE[idx].append(elist[count])
+
+        count += 1
 
     fig = plt.figure(figsize=(18,8))
     plt.ylabel(ylabel,fontsize=18)
     plt.xlabel(xlabel,fontsize=18)
 
-    for xlist, ylist in zip(grpX, grpY):
-        if horiz:
-            plt.barh(xlist,ylist,align='center',height=1.0,edgecolor='white',ecolor='k')
+    plot_settings = {'zorder':3, 'alpha':0.9, 'align':'center', 'edgecolor':'white', 'ecolor':'k'}
+    error_config = {'zorder':5}
+
+    for i, (xlist, ylist) in enumerate(zip(grpX, grpY)):
+        # determine if there is an error list
+        if len(grpE) != 1:
+            errs = grpE[i]
         else:
-            plt.bar(xlist,ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
+            errs = np.zeros(len(xlist))
+
+        if horiz:
+            plt.barh(xlist,ylist,xerr=errs,height=1.0,**plot_settings)
+        else:
+            # zorder controls layering; higher zorder is more on top
+            plt.bar(xlist,ylist,yerr=errs,width=1.0,error_kw=error_config,**plot_settings)
 
     return plt
 
-def plot_bar(xlist, ylist, xlabel='', ylabel='', horiz=False):
+def plot_bar(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     """
 
 
@@ -94,10 +124,14 @@ def plot_bar(xlist, ylist, xlabel='', ylabel='', horiz=False):
     fig = plt.figure()
     plt.ylabel(ylabel,fontsize=16)
     plt.xlabel(xlabel,fontsize=16)
+
+    plot_settings = {'zorder':3, 'alpha':0.9, 'align':'center', 'edgecolor':'white', 'ecolor':'k'}
+    error_config = {'zorder':5}
+
     if horiz:
-        plt.barh(xlist,ylist,align='center',edgecolor='white',ecolor='k',zorder=3)
+        plt.barh(xlist,ylist,xerr=elist,height=1.0,**plot_settings)
     else:
-        plt.bar(xlist,ylist,align='center',width=1.0,edgecolor='white',ecolor='k',zorder=3)
+        plt.bar(xlist,ylist,yerr=elist,width=1.0,**plot_settings)
     return plt
 
 
@@ -179,8 +213,7 @@ if __name__ == "__main__":
     # input data
     parser.add_argument("-i", "--infile",
         help="Input file with x in 1st column, y in 2nd column."+
-             "TODO add features for plot labels in 3rd column "+
-             "and stdev in 4th column.")
+             "Optional: plot labels in 3rd column, stdev in 4th column.")
 
     # plot labeling
     parser.add_argument("-x", "--xlabel",default="",
@@ -206,12 +239,12 @@ if __name__ == "__main__":
     if not os.path.exists(opt['infile']):
         raise parser.error("Input file %s does not exist." % opt['infile'])
 
-    xlist, ylist, llist = parse_file(opt['infile'])
+    xlist, ylist, llist, elist = parse_file(opt['infile'])
     if opt['group']:
-        plt = plot_bar_group(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+        plt = plot_bar_group(xlist, ylist, elist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     elif opt['line']:
         plt = plot_line(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     else:
-        plt = plot_bar(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+        plt = plot_bar(xlist, ylist, elist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     finalize_and_save(plt, xlist, ylist, llist, opt['output'])
 
