@@ -169,6 +169,14 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 
     """
 
+    # ===== CUSTOM THRESHOLD LINE ===== #
+    # include this threshold value as comment in input file for your record
+    plt.axhline(y=7.81474104, c='green', lw=2.0,ls='--',label='arg reference')
+    plt.axhline(y=12.17928287,c='purple',lw=2.0,ls=':', label='ser reference')
+    plt.legend(loc=2)
+
+    # ===== TICK LABEL OPTIONS ===== #
+
     # use labels on the x ticks
     if len(llist) == len(xlist):
         plt.xticks(xlist, llist, rotation=-40, horizontalalignment='left') # default align is center
@@ -199,6 +207,10 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 #        top='off',         # turn off ticks along the top edge
 #        labelbottom='off') # turn off tick labels along the bottom edge
 
+
+
+
+    # ===== FINALIZE AND SAVE ========= #
     plt.savefig(figname,bbox_inches='tight')
     plt.show()
 
