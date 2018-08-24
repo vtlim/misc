@@ -11,10 +11,14 @@ import matplotlib.pyplot as plt
 
 def parse_file(infile):
     """
-
+    Parse the input file. Columns must be separated by semicolons, and ordered
+      as follows: (1) x-value, (2) y-value, (3) label, (4) error bar.
+    If you have error bars but don't want labels, just fill in some text placeholder.
 
     Parameters
     ----------
+    infile : string
+        Name of the input file
 
     """
 

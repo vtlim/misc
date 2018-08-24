@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Sum input columns into a new column and compute basic stats.
+# Sum input columns as a new series and write out file.
 
 import numpy as np
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
                         help="Name of the input file. First line is assumed "
                         "to be some heading line and is NOT read in.")
     parser.add_argument("-c", "--columns",default=None,
-                        help="Specify particular data columns to plot. Separate"
+                        help="Specify particular data columns to sum. Separate"
                         " values with semicolon and place in quotes (bc bash). "
                         "Ex. \"2;3;4\". The 0th column is x, so don't specify "
                         "0. If not specified, will sum all data columns.")
