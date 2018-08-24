@@ -33,8 +33,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-i", "--input",
-                        help="Name of the input file. First line is assumed "
-                        "to be some heading line and is NOT read in.")
+                        help="Name of the input file.")
     parser.add_argument("-c", "--columns",default=None,
                         help="Specify particular data columns to sum. Separate"
                         " values with semicolon and place in quotes (bc bash). "
