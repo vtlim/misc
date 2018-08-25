@@ -56,6 +56,8 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     horiz
 
     """
+    colors = ['purple','lightseagreen']
+
 
     refx = -5000  # some start int for ref group
     count = 0     # define for elist in case empty
@@ -91,8 +93,8 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
 
         count += 1
 
-    fig = plt.figure(figsize=(18,8))
-    plt.ylabel(ylabel,fontsize=18)
+    fig = plt.figure(figsize=(12,8))
+    plt.ylabel(ylabel,fontsize=20)
     plt.xlabel(xlabel,fontsize=18)
 
     plot_settings = {'zorder':3, 'alpha':0.9, 'align':'center', 'edgecolor':'white', 'ecolor':'k'}
@@ -106,10 +108,14 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
             errs = np.zeros(len(xlist))
 
         if horiz:
-            plt.barh(xlist,ylist,xerr=errs,height=1.0,**plot_settings)
+            bars = plt.barh(xlist,ylist,xerr=errs,height=1.0,**plot_settings)
+            if len(colors) != 0:
+                [b.set_facecolor(colors[i]) for b in bars]
         else:
             # zorder controls layering; higher zorder is more on top
-            plt.bar(xlist,ylist,yerr=errs,width=1.0,error_kw=error_config,**plot_settings)
+            bars = plt.bar(xlist,ylist,yerr=errs,width=1.0,error_kw=error_config,**plot_settings)
+            if len(colors) != 0:
+                [b.set_facecolor(colors[i]) for b in bars]
 
     return plt
 
@@ -171,8 +177,8 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 
     # ===== CUSTOM THRESHOLD LINE ===== #
     # include this threshold value as comment in input file for your record
-    plt.axhline(y=7.81474104, c='green', lw=2.0,ls='--',label='arg reference')
-    plt.axhline(y=12.17928287,c='purple',lw=2.0,ls=':', label='ser reference')
+    plt.axhline(y=9.7405, c='b', lw=2.0,ls='--',label='arg reference')
+    plt.axhline(y=12.1833,c='r',lw=2.0,ls=':', label='ser reference')
     plt.legend(loc=2)
 
     # ===== TICK LABEL OPTIONS ===== #
@@ -185,7 +191,7 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 #    if len(llist) == len(xlist):
 #        plt.yticks(xlist, llist)
 
-#    plt.ylim(330, 362)
+    plt.ylim(0, 15)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 

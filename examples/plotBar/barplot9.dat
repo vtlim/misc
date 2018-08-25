@@ -1,0 +1,14 @@
+# Arg reference: 9.74051896
+# Ser reference: 12.18326693
+
+1;  10.7485006;  moreArg_10wins_structArg;  1.87907168
+2;  11.19152339;  moreArg_10wins_structSer;  1.933238
+
+4;  11.79688125;  lessArg_10wins_structArg;  1.94761623
+5;  11.46021591;  lessArg_10wins_structSer;  1.96198289
+
+7;  11.83566573;  lessSer_10wins_structArg;  2.03777389
+8;  11.16913235;  lessSer_10wins_structSer;  1.86053706
+
+10; 12.45661735;  moreSer_10wins_structArg;  1.83795157
+11; 11.84086365;  moreSer_10wins_structSer;  1.81211258
