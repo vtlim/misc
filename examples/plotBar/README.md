@@ -21,5 +21,8 @@ Git commit: f6c17ef
 Git commit: f6c17ef  
 7. `python plotBar.py -i barplot7.dat --group -o output7.png`
 
-Git commit:
+Git commit: aed9dab
 8. `python plotBar.py -i barplot8.dat --group -o output8.png`
+
+Git commit:
+9. `python plotBar.py -i barplot9.dat --group -o output9.png`
