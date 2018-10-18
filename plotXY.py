@@ -14,9 +14,12 @@
 # TODO:
 #   - Write documentation
 #
-# If combining data together from multiple files, Google Sheets can help.
-#   Then copy from sheets into vim window.
-#   Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
+# Notes:
+#   - Subsampling with grouped data works by first separating the data into
+#     the specified number of groups, THEN subsampling.
+#   - If combining data together from multiple files, Google Sheets can help.
+#     Then copy from sheets into vim window.
+#     Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
 #
 
 import os
@@ -163,7 +166,7 @@ def factorize(n):
     return sorted(set(reduce(list.__add__,
            ([i, n//i] for i in range(1, int(pow(n, 0.5) + 1)) if n % i == 0))))
 
-def formatFig(ax1, plt, **kwargs):
+def formatFig(ax1, plt, fig, **kwargs):
     """
     """
 
@@ -219,12 +222,19 @@ def xyPlot(**kwargs):
         uncerts = np.loadtxt(uncertf)
     x = data[:,0]
 
+    ### Check that first column of uncertainties match first column of data
+    # TODO!
+
     ### Get the y-columns.
     if opt['columns'] is not None:
         cols = list(map(int,opt['columns'].split(';')))
         y_mat = np.asarray([data[:,i] for i in cols]).T
+        if uncertf is not None:
+            uncerts = np.asarray([uncerts[:,i] for i in cols]).T
     else:
         y_mat = data[:,1:]
+        if uncertf is not None:
+            uncerts = uncerts[:,1:]
     num_cols = y_mat.shape[1] # how many columns in orig data set
     if num_cols == 1: y_mat = y_mat.flatten()
 
@@ -253,6 +263,7 @@ def xyPlot(**kwargs):
 
 
     ### Initialize figure.
+    ### https://matplotlib.org/examples/color/colormaps_reference.html
     #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
     colors = mpl.cm.tab20(np.linspace(0, 1, 10)) # colors for plot
 
@@ -266,6 +277,7 @@ def xyPlot(**kwargs):
               "the lines, use one of {}. ".format(len(x),num_groups,factors)))
         lines_per_plot = int(num_groups/num_plots)
         colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
+        #colors = mpl.cm.bwr(np.linspace(0, 1, lines_per_plot))
 
     fig, axs = plt.subplots(1, num_plots, sharey=True)
     if num_plots == 1:
@@ -284,7 +296,7 @@ def xyPlot(**kwargs):
             if (num_plots != 0) and (i>0) and (i%lines_per_plot == 0):
                 idx += 1
                 # format the current subplot then get next legend ready
-                formatFig(curr_ax,plt,**opt)
+                formatFig(curr_ax,plt,fig,**opt)
                 opt['legend'] = ';'.join(str(i) for i in range(i+1,i+1+lines_per_plot))
                 # change to next subplot
                 print("Switching to new subplot...")
@@ -304,7 +316,7 @@ def xyPlot(**kwargs):
             c = colors[i]
         print(i, len(x), y.shape)
         if uncertf is not None: # UNTESTED as of 4/6/18
-            curr_ax.errorbar(x,y,yerr=u_mat[i],capsize=0.8,lw=0.8,color=c)
+            curr_ax.errorbar(x,y,yerr=uncerts[:,i],capsize=0.8,lw=0.8,color=c)
         else:
             curr_ax.plot(x, y, lw=0.8, color=c) # thinner line
 
@@ -312,10 +324,11 @@ def xyPlot(**kwargs):
     axes = plt.gca()
 #    axes.set_xlim([min(x)-2,max(x)+2])
 #    axes.set_ylim([-0.1,3])
+    axes.set_ylim([0, 20])
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
-    formatFig(curr_ax,plt,**opt)
+    formatFig(curr_ax,plt,fig,**opt)
 
     ### Save figure.
     if opt['publish']:
