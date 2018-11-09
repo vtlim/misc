@@ -1,18 +1,39 @@
 
-# vmdt -e file.tcl
+# ____________________________________________________________________________________
+#
+# permeation_traj.tcl
+#
+# Purpose:  Extract permeant z-position frames from input trajectories, then wrap output simulation in XY plane around permeant.
+# Usage  :  vmdt -e permeation_traj.tcl -args [todo]
+# Example:  vmdt -e permeation_traj.tcl -args [todo]
+#           vmdt here stands for "vmd -dispdev none"
+#
+# Dependencies
+#  1. move_atoms.tcl
+#  2. pbchelper.tcl
+#  3. pbctools VMD package
+#
+# TODO:
+#  - split this into two scripts, (1) main for extracting frames, (2) external tcl for wrapXY
+#  - implement argument parsing
+#  - add output information writing on psf, dcd's, skip, min, max, etc.
+#
+# Assumptions
+#  - Only works on rectangular boxes
+#  - Grid spacing can only be as fine as single decimal place
+#  - Single decimal space also used to locate frames (must be consistent for dict keys)
+#  - Wrap system around POPC center of mass
+#  - Can create and delete tempwrapfiles subdirectory
+#
+# By:      Victoria T. Lim
+# Version: Nov 9 2018
+# ____________________________________________________________________________________
 
-# assumptions
-# - single decimal place for grid
-# - cv locating round either by single decimal or by int
-# - both decimal/rounding items above MUST be consistent
-# - wrap system around POPC center of mass
-# - sourcing pbctools locations
-# - tempwrapfiles subdirectory
 
 # define the range (inclusive) for collective variable distance
 set maxZ 44
-set minZ 32
-set spacing 2
+set minZ -8
+set spacing 1.0
 
 # define solute atomselection for VMD
 set sol "segname WTT and name OH2"
@@ -38,6 +59,11 @@ puts $grid
 # read in system
 mol new ../00_reference/chipot_box.psf
 mol addfile win01-ens1/01/win01.01.dcd first 0 last -1 step $inskip waitfor all
+mol addfile win02-ens1/01/win02.01.dcd first 0 last -1 step $inskip waitfor all
+mol addfile win03-ens1/01/win03.01.dcd first 0 last -1 step $inskip waitfor all
+mol addfile win04-ens1/01/win04.01.dcd first 0 last -1 step $inskip waitfor all
+mol addfile win05-ens1/01/win05.01.dcd first 0 last -1 step $inskip waitfor all
+mol addfile win06-ens1/01/win06.01.dcd first 0 last -1 step $inskip waitfor all
 
 # wrap system around bilayer
 package require pbctools
@@ -68,10 +94,6 @@ for {set i 0} {$i < $n} {incr i} {
     set dist [expr {[$wtt get z] - [lindex [measure center $lip] 2]}]
 
     # pseudo-round by formatting to single decimal place
-    #set dist [format "%.1f" $dist]
-
-    # OR, pseudo-round by converting float to int and back to float with .0
-    set dist [expr int($dist)]
     set dist [format "%.1f" $dist]
 
     # see if that dist is one of the grid points
@@ -102,7 +124,7 @@ set all [atomselect $molid "all"]
 
 if {$high_to_low} {
     # reverse order the dictionary keys
-    foreach k [lsort -decreasing [dict keys $grid]] {
+    foreach k [lsort -real -decreasing [dict keys $grid]] {
         if {[dict get $grid $k]==1} {
             puts "=========== Reading in distance: $k ==========="
             mol addfile tempwrapfiles/$k.pdb waitfor all
@@ -121,6 +143,9 @@ if {$high_to_low} {
 # loop over all frames to do wrapping
 set n [expr {[molinfo 1 get numframes]}]
 for {set i 0} {$i < $n} {incr i} {
+
+    # update frame to get accurate selections/unit cell
+    animate goto $i
     $wtt frame $i
     $all frame $i
 
