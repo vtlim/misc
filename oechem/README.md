@@ -3,8 +3,11 @@ Various scripts related to OpenEye python toolkits.
 
 # Contents
 
-* `classifyN.py` - finds invertible nitrogens and sums the angles around each.  
+* `am1wib.py` - finds invertible nitrogens and sums the angles around each.  
    example: `python classifyN.py -f plan2pyr-222.sdf > angleResults.dat`
+
+* `charge_mols.py` - add charges to mols using ELF10 model from oequacpac
+   example: `python -i input.sdf -o output.mol2` 
 
 * `combineSDF.py` - combines molecule data from multiple files into a single SDF file.  
    example: `python combineSDF.py -i 01_setup/initCoords/ -o fromVMD.sdf`
