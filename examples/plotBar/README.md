@@ -27,6 +27,6 @@ Git commit: aed9dab
 Git commit: 3332c82   
 9. `python plotBar.py -i barplot09.dat --group -o output09.png`
 
-Git commit:  
+Git commit: 5e5b2a7   
 10. `python plotBar.py -i barplot10.dat --horiz --group -x 'relative energy (kcal/mol)' --publish -o output10.png`
 
