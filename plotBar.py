@@ -23,7 +23,7 @@ def parse_file(infile):
     """
 
     with open(infile,'r') as f:
-        zipdata = zip(*[line.split(';') for line in f if not line.startswith(("#","\n"))])
+        zipdata = zip(*[line.split(';') for line in f if not line.lstrip(' ').startswith(("#","\n"))])
         listdata = [list(a) for a in zipdata]
         xlist = [float(i) for i in listdata[0]]
         ylist = [float(i) for i in listdata[1]]
@@ -38,7 +38,32 @@ def parse_file(infile):
 
     return xlist, ylist, llist, elist
 
-def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
+
+def initiate_plot(xlabel, ylabel, publish):
+    """
+    publish : Bool
+        Format figure for article publication.
+    """
+    if publish:
+        fig = plt.figure()
+        #fig.set_size_inches(3.37,1.7)
+        fig.set_size_inches(6.5,3.0)
+        plt.ylabel(ylabel,fontsize=10)
+        plt.xlabel(xlabel,fontsize=10)
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        return fig, plt
+
+    fig = plt.figure(figsize=(12,8))
+    plt.ylabel(ylabel,fontsize=16)
+    plt.xlabel(xlabel,fontsize=16)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+
+    return fig, plt
+
+
+def plot_bar_group(plt, xlist, ylist, elist, horiz=False):
     """
     Generate the bar plot in small groups at a time. Each bar of a group
         has a different color (e.g., blue yellow green in a group).
@@ -51,12 +76,11 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     ----------
     xlist
     ylist
-    xlabel
-    ylabel
     horiz
 
     """
     #colors = ['purple','lightseagreen']
+    legends = ['1','2','3','4','5','6','7']
 
 
     refx = -5000  # some start int for ref group
@@ -93,10 +117,6 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
 
         count += 1
 
-    fig = plt.figure(figsize=(12,8))
-    plt.ylabel(ylabel,fontsize=20)
-    plt.xlabel(xlabel,fontsize=18)
-
     plot_settings = {'zorder':3, 'alpha':0.9, 'align':'center', 'edgecolor':'white', 'ecolor':'k'}
     error_config = {'zorder':5}
 
@@ -107,19 +127,28 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
         else:
             errs = np.zeros(len(xlist))
 
+        # do the plotting
         if horiz:
             bars = plt.barh(xlist,ylist,xerr=errs,height=1.0,**plot_settings)
         else:
             # zorder controls layering; higher zorder is more on top
             bars = plt.bar(xlist,ylist,yerr=errs,width=1.0,error_kw=error_config,**plot_settings)
+
+        # see if custom colors were defined
         try:
             [b.set_facecolor(colors[i]) for b in bars]
         except NameError:
-            continue
+            pass
+
+        # see if custom legend was input, but only do this once
+        try:
+            bars[0].set_label(legends[i])
+        except NameError:
+            pass
 
     return plt
 
-def plot_bar(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
+def plot_bar(plt, xlist, ylist, elist, horiz=False):
     """
 
 
@@ -127,9 +156,6 @@ def plot_bar(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     ----------
 
     """
-    fig = plt.figure()
-    plt.ylabel(ylabel,fontsize=16)
-    plt.xlabel(xlabel,fontsize=16)
 
     plot_settings = {'zorder':3, 'alpha':0.9, 'align':'center', 'edgecolor':'white', 'ecolor':'k'}
     error_config = {'zorder':5}
@@ -141,7 +167,7 @@ def plot_bar(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     return plt
 
 
-def plot_line(xlist, ylist, xlabel='', ylabel='', horiz=False):
+def plot_line(plt, xlist, ylist, horiz=False):
     """
 
 
@@ -149,9 +175,6 @@ def plot_line(xlist, ylist, xlabel='', ylabel='', horiz=False):
     ----------
 
     """
-    fig = plt.figure()
-    plt.ylabel(ylabel,fontsize=16)
-    plt.xlabel(xlabel,fontsize=16)
 
     # define colors, either a single one, or a list
     cs = ['orange','g','b','m','b','b']
@@ -175,14 +198,15 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
 
     """
 
+#    plt.ylim(0, 7)
+
     # ===== CUSTOM THRESHOLD LINE ===== #
     # include this threshold value as comment in input file for your record
     #plt.axhline(y=3.049, c='b', lw=2.0,ls='--',label='arg reference')
     #plt.axhline(y=5.012,c='r',lw=2.0,ls=':', label='ser reference')
-    plt.legend(loc=2)
+    plt.legend(loc=1)
 
-    # ===== TICK LABEL OPTIONS ===== #
-
+    # ====== TICK LABEL OPTIONS ======= #
     if horiz:
         # use labels on the y ticks (but still want xlist)
         if len(llist) == len(xlist):
@@ -191,10 +215,6 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
         # use labels on the x ticks
         if len(llist) == len(xlist):
             plt.xticks(xlist, llist, rotation=-40, horizontalalignment='left') # default align is center
-
-#    plt.ylim(0, 7)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
 
     # ===== GRID AND TICK OPTIONS ===== #
 #    plt.grid()
@@ -213,8 +233,6 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
         axis='y',          # change settings for y-axis
         which='both',      # change settings for both major and minor ticks
         left='off')        # turn off ticks along the bottom edge
-
-
 
 
     # ===== FINALIZE AND SAVE ========= #
@@ -251,6 +269,8 @@ if __name__ == "__main__":
         help="Generate line plots in the style of bar plots.")
     parser.add_argument("--horiz",action="store_true",default=False,
         help="Generate bar plot with horizontal bars. Default is vertical.")
+    parser.add_argument("--publish",action="store_true",default=False,
+        help="Format for publishing in article.")
 
 
     args = parser.parse_args()
@@ -259,11 +279,12 @@ if __name__ == "__main__":
         raise parser.error("Input file %s does not exist." % opt['infile'])
 
     xlist, ylist, llist, elist = parse_file(opt['infile'])
+    fig, plt = initiate_plot(opt['xlabel'], opt['ylabel'], opt['publish'])
     if opt['group']:
-        plt = plot_bar_group(xlist, ylist, elist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+        plt = plot_bar_group(plt, xlist, ylist, elist, opt['horiz'])
     elif opt['line']:
-        plt = plot_line(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+        plt = plot_line(plt, xlist, ylist, opt['horiz'])
     else:
-        plt = plot_bar(xlist, ylist, elist, opt['xlabel'], opt['ylabel'], opt['horiz'])
+        plt = plot_bar(plt, xlist, ylist, elist, opt['horiz'])
     finalize_and_save(plt, xlist, ylist, llist, opt['output'], opt['horiz'])
 

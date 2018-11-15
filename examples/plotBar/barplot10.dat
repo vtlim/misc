@@ -1,0 +1,27 @@
+# version: Nov 14 2018
+# /beegfs/DATA/mobley/limvt/gitmisc/plotBar.py
+# python plotBar.py -i plot.in --horiz --group -x 'relative energy (kcal/mol)' -o output.png --publish
+-1 ; 0.09 ; 
+-2 ; 0.25 ;   
+-3 ; 0.06 ;   
+-4 ; 0.95 ; cage 
+-5 ; 0.21 ;  
+-6 ; -0.87;  
+-7 ; 1.26 ;  
+ 
+-10 ; 0.21;
+-11; 0.72; 
+-12; 0.33; 
+-13; 3.10; book 
+-14; 0.39; 
+-15; 0.27; 
+-16; 0.16; 
+ 
+-19; 0.51; 
+-20; 1.8 ; 
+-21; 1.21; 
+-22; 6.25; ring
+-23; 1.41;  
+-24; 3.68; 
+-25; 1.34; 
+
