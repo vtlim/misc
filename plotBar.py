@@ -34,7 +34,7 @@ def parse_file(infile):
         try:
             elist = [float(i) for i in listdata[3]]
         except IndexError:
-            elist = []
+            elist = np.zeros(len(xlist))
 
     return xlist, ylist, llist, elist
 
@@ -56,7 +56,7 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     horiz
 
     """
-    colors = ['purple','lightseagreen']
+    #colors = ['purple','lightseagreen']
 
 
     refx = -5000  # some start int for ref group
@@ -101,7 +101,7 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
     error_config = {'zorder':5}
 
     for i, (xlist, ylist) in enumerate(zip(grpX, grpY)):
-        # determine if there is an error list
+        # determine if there is an error list, if not grpE is len 1
         if len(grpE) != 1:
             errs = grpE[i]
         else:
@@ -109,13 +109,13 @@ def plot_bar_group(xlist, ylist, elist, xlabel='', ylabel='', horiz=False):
 
         if horiz:
             bars = plt.barh(xlist,ylist,xerr=errs,height=1.0,**plot_settings)
-            if len(colors) != 0:
-                [b.set_facecolor(colors[i]) for b in bars]
         else:
             # zorder controls layering; higher zorder is more on top
             bars = plt.bar(xlist,ylist,yerr=errs,width=1.0,error_kw=error_config,**plot_settings)
-            if len(colors) != 0:
-                [b.set_facecolor(colors[i]) for b in bars]
+        try:
+            [b.set_facecolor(colors[i]) for b in bars]
+        except NameError:
+            continue
 
     return plt
 
@@ -165,7 +165,7 @@ def plot_line(xlist, ylist, xlabel='', ylabel='', horiz=False):
     return plt
 
 
-def finalize_and_save(plt, xlist, ylist, llist, figname):
+def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
     """
     Customize plot with grid, labels, and/or other features.
     Then save and show figure.
@@ -177,41 +177,42 @@ def finalize_and_save(plt, xlist, ylist, llist, figname):
 
     # ===== CUSTOM THRESHOLD LINE ===== #
     # include this threshold value as comment in input file for your record
-    plt.axhline(y=9.7405, c='b', lw=2.0,ls='--',label='arg reference')
-    plt.axhline(y=12.1833,c='r',lw=2.0,ls=':', label='ser reference')
+    #plt.axhline(y=3.049, c='b', lw=2.0,ls='--',label='arg reference')
+    #plt.axhline(y=5.012,c='r',lw=2.0,ls=':', label='ser reference')
     plt.legend(loc=2)
 
     # ===== TICK LABEL OPTIONS ===== #
 
-    # use labels on the x ticks
-    if len(llist) == len(xlist):
-        plt.xticks(xlist, llist, rotation=-40, horizontalalignment='left') # default align is center
+    if horiz:
+        # use labels on the y ticks (but still want xlist)
+        if len(llist) == len(xlist):
+            plt.yticks(xlist, llist)
+    else:
+        # use labels on the x ticks
+        if len(llist) == len(xlist):
+            plt.xticks(xlist, llist, rotation=-40, horizontalalignment='left') # default align is center
 
-#    # use labels on the y ticks -- if horiz, use xlist
-#    if len(llist) == len(xlist):
-#        plt.yticks(xlist, llist)
-
-    plt.ylim(0, 15)
+#    plt.ylim(0, 7)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
 
     # ===== GRID AND TICK OPTIONS ===== #
 #    plt.grid()
 
-#    plt.gca().xaxis.grid(True)  # only show vertical grid
-#    plt.tick_params(
-#        axis='y',          # change settings for y-axis
-#        which='both',      # change settings for both major and minor ticks
-#        left='off')        # turn off ticks along the bottom edge
-
 #    # show horizontal grid and don't show xticks or xticklabels
-    plt.gca().yaxis.grid(True)  # only show horizontal grid
+#    plt.gca().yaxis.grid(True)  # only show horizontal grid
 #    plt.tick_params(
 #        axis='x',          # change settings for x-axis
 #        which='both',      # change settings for both major and minor ticks
 #        bottom='off',      # turn off ticks along the bottom edge
 #        top='off',         # turn off ticks along the top edge
 #        labelbottom='off') # turn off tick labels along the bottom edge
+
+    plt.gca().xaxis.grid(True)  # only show vertical grid
+    plt.tick_params(
+        axis='y',          # change settings for y-axis
+        which='both',      # change settings for both major and minor ticks
+        left='off')        # turn off ticks along the bottom edge
 
 
 
@@ -264,5 +265,5 @@ if __name__ == "__main__":
         plt = plot_line(xlist, ylist, opt['xlabel'], opt['ylabel'], opt['horiz'])
     else:
         plt = plot_bar(xlist, ylist, elist, opt['xlabel'], opt['ylabel'], opt['horiz'])
-    finalize_and_save(plt, xlist, ylist, llist, opt['output'])
+    finalize_and_save(plt, xlist, ylist, llist, opt['output'], opt['horiz'])
 
