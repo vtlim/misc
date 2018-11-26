@@ -1,21 +1,28 @@
 
-# Purpose: Analyze list of trajectories using RMSD, RMSF, water density, etc.
+#
+# analyzeDCD.tcl
+#
+# By:       Victoria T. Lim
+# Purpose:  Analyze list of trajectories using RMSD, RMSF, water density, etc.
+#
 # Usage:
 #  1. vmd -dispdev none -e file.tcl -args inpsf inskip inpdb indcd [indcd2 indcd3 ...]
-#  2. [call some analysis function in this script in VMD terminal/console]
+#  2. [call some analysis function in this script in VMD terminal/console, see documentation]
 #
 # Full path names for sourcing:
-#   - gpl: /beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/structural/analyzeDCD.tcl
-#   - cas: /home/limvt/connect/greenplanet/goto-beegfs/hv1/04_fep/analysis/structural/analyzeDCD.tcl
+#   - gpl: /beegfs/DATA/mobley/limvt/gitmisc/vmd/structural/analyzeDCD.tcl
+#   - cas: /home/limvt/connect/greenplanet/goto-beegfs/gitmisc/vmd/structural/analyzeDCD.tcl
 #
 # Notes:
-#   - Read in data before loading functions, else it doesn't load properly in visual mode with GUI.
-#   - Don't wrap after reading initial data bc rmsd/rmsf use pdb reference, which may not have pbc params
-#   - Comment out the "mol new ... mol addfile" section if you want the functions without loading. (UNTESTED)
-#     To load functions only, "source /beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/structural/analyzeDCD.tcl"
+#   - Read in trajectory data before loading functions, else doesn't load properly in visual mode with GUI.
+#   - Don't wrap outside of indiv functions. rmsd/rmsf align using pdb reference, which may not have pbc params for wrap
+#   - To load functions only not trajectories,
+#       [1] Comment out the "mol new ... mol addfile" section
+#       [2] Call "source thisscript.tcl" after already in VMD
+#       [3] May need to set variables for writing (dcdlist, etc.)
+#
 
 # ========================== Variables ========================= #
-
 
 set inpsf [lindex $argv 0]
 set inskip [lindex $argv 1]
@@ -25,12 +32,14 @@ for {set i 3} {$i < $argc} {incr i} {
     lappend dcdlist [lindex $argv $i]
 }
 
-# read in data
-mol new $inpsf
-mol addfile $inpdb        ;# mol 0 == mol top
-foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 frames equil
-    mol addfile $dcd first 0 last -1 step $inskip waitfor all
-}
+# ========================== Load inputs ========================= #
+
+## read in data
+#mol new $inpsf
+#mol addfile $inpdb        ;# mol 0 == mol top
+#foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 frames equil
+#    mol addfile $dcd first 0 last -1 step $inskip waitfor all
+#}
 
 # =============================================================== #
 
@@ -602,6 +611,70 @@ proc calc_dens_wat { {presel ""} {outprefix "watdens"} } {
 
 } ;# end of calc_dens_wat
 
+
+proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
+    # ============================================================
+    # Calculate vector direction of some selection relative to bilayer normal direction.
+    #
+    # Arguments
+    #  - presel0 : string
+    #       VMD selection of the base of the vector
+    #  - presel1 : string
+    #       VMD selection of the end (arrow) of the vector
+    #  - outprefix : string
+    #       Basename of the output files for dat file. Default is "selorient".
+    # Returns
+    #  - (nothing)
+    # Example usage
+    #  - calc_sel_orient resname,GBI1,and,name,C4 resname,GBI1,and,name,C orient_gbi1
+    #  - calc_sel_orient resname,GBI1,and,name,C4 resname,GBI1,and,name,C
+    # Notes
+    #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
+    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
+    # ============================================================
+    global inpsf
+    global inskip
+    global inpdb
+    global dcdlist
+    set moltop 0
+
+    # set vmd selection for vector
+    set sel0 [atomselect top "[split $presel0 {,}]"]
+    set sel1 [atomselect top "[split $presel1 {,}]"]
+    set whole [atomselect top all]
+
+    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
+    set n [molinfo 0 get numframes]
+    pbc wrap -molid 0 -compound fragment -center com -centersel "resname POPC" -first 1 -last $n ;# zero-based index
+
+    # write trajectory information to output
+    set outDataFile [open $outprefix.dat w]
+    puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist"
+    puts $outDataFile "# VMD selection tail: $presel0"
+    puts $outDataFile "# VMD selection head: $presel1\n"
+
+    for {set frame 0} {$frame < $n} {incr frame} {
+        # update selections to this frame number
+        $whole frame $frame
+        $sel0 frame $frame
+        $sel1 frame $frame
+
+        # get vector of the selections
+        set tailpt [lindex [$sel0 get {x y z}] 0] ;# un-nest lists
+        set headpt [lindex [$sel1 get {x y z}] 0]
+        set selvec [vecsub $headpt $tailpt]
+
+        # take unit vector
+        set unitvec [vecnorm $selvec]
+
+        # dot product against +z direction
+        set overlap [vecdot $unitvec {0 0 1}]
+
+        puts $outDataFile "$frame\t$overlap"
+    }
+    close $outDataFile
+
+} ;# end of calc_sel_orient
 
 
 # =============================================================== #
