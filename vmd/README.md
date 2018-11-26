@@ -1,25 +1,27 @@
 # Scripts for analysis in VMD
 
-TODO: 
- * add other analysis scripts from hv1/perme work (tcl extension, vmd extension)
- * add vmdrc file
- * organize script locations and update here
+Last updated: Nov 26 2018
 
 ## Contents
-1. `drawBox.tcl`
-    * Purpose: Draw guide boxes (filled or outline)
-    * Source:  `/beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/fixChg/drawBox.tcl`
 
-2. `move_atoms.tcl`
-    * Purpose: Translate atoms in system
-    * Source:  `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/move_atoms.tcl`
+1. `analyzeDCD.tcl`
+    * Purpose:          Various functions for MD simulation analysis in VMD.
+    * Orig. source:     `/beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/structural/analyzeDCD.tcl`
 
-3. `pbchelp.tcl`
-    * Purpose: Helper procedures to go with `wrapXY.tcl`
-    * Source:  `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/pbchelp.tcl`
+2. `drawBox.tcl`
+    * Purpose:          Draw guide boxes (filled or outline)
+    * Orig. source:     `/beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/fixChg/drawBox.tcl`
 
-4. `wrapXY.tcl`
-    * Purpose: Wrap membrane in XY place around specified selection
-    * Source:  `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/wrapXY.tcl`
+3. `move_atoms.tcl`
+    * Purpose:          Translate atoms in system
+    * Orig. source:     `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/move_atoms.tcl`
+
+4. `pbchelp.tcl`
+    * Purpose:          Helper procedures to go with `wrapXY.tcl`
+    * Orig. source:     `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/pbchelp.tcl`
+
+5. `wrapXY.tcl`
+    * Purpose:          Wrap membrane in XY place around specified selection
+    * Orig. source:     `/beegfs/DATA/mobley/limvt/hv1/08_permeate/water/try02_recdHill/wrapXY.tcl`
 
 
