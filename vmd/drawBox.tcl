@@ -6,8 +6,10 @@
 #    [3] "draw delete all" to start over
 # Adapted from: http://www.ks.uiuc.edu/Research/vmd/vmd-1.7.1/ug/node173.html
 # Full path names for sourcing:
-#    gpl: /beegfs/DATA/mobley/limvt/hv1/04_fep/analysis/fixChg/drawBox.tcl
-#    cas: /home/limvt/connect/greenplanet/goto-beegfs/hv1/04_fep/analysis/fixChg/drawBox.tcl
+#    gpl: /DFS-L/old_beegfs_data/mobley/limvt/gitmisc/vmd/drawBox.tcl
+#    cas: /home/limvt/connect/greenplanet/goto-beegfs/gitmisc/vmd/drawBox.tcl
+# By:       Victoria T. Lim
+# Version:  Nov 29 2018
 
 
 proc draw_box {boxcen halfx halfy halfz} {
