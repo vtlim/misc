@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-# By: Victoria T. Lim
+# Purpose:  Combine multiple molecular structure files into a single SDF file.
+# By:       Victoria T. Lim
+# Version:  Dec 10 2018
+
 
 import os, sys, glob
 import openeye.oechem as oechem
@@ -8,8 +11,11 @@ import openeye.oechem as oechem
 
 # --------------------------- Main Function ------------------------- #
 
-def combineSDF(infiles, outfile):
-    molfiles = glob.glob(os.path.join(infiles, '*.pdb'))
+def combineSDF(infiles, ftype, outfile):
+
+    ### Glob for input files to combine.
+    ext = '*.'+ftype
+    molfiles = glob.glob(os.path.join(infiles, ext))
 
     ### Open output file to write molecules.
     ofs = oechem.oemolostream()
@@ -29,7 +35,7 @@ def combineSDF(infiles, outfile):
         try:
             mol = next(ifs.GetOEMols())
         except StopIteration:
-            print('No mol loaded for %s (StopIteration exception)' % mol.GetTitle())
+            print('No mol loaded for %s' % mol.GetTitle())
         ifs.close()
         mol.SetTitle(f.split('/')[-1].split('.')[0])
         oechem.OEWriteConstMolecule(ofs, mol)
@@ -40,24 +46,21 @@ def combineSDF(infiles, outfile):
 # ------------------------- Parse Inputs ----------------------- #
 
 
+if __name__ == "__main__":
 
-if __name__ == '__main__':
-    from optparse import OptionParser
+    import argparse
+    parser = argparse.ArgumentParser(description="Combine a set of molecule "
+            "files such as pdb or mol2 into a single sdf file.")
 
-    parser = OptionParser(usage = "Combine a set of molecule files such as pdb\
- or mol2 into a single sdf file for use with other scripts. ")
+    parser.add_argument('-i', '--infiles',
+            help = "Path to directory containing all molecule files.")
 
-    parser.add_option('-i', '--infiles',
-            help = "Path to directory containing all molecule files.\
- Change the extension in this script if necessary.",
-            type = "string",
-            dest = 'infiles')
+    parser.add_argument('-t', '--ftype',
+            help = "Name of the file extension. Ex: pdb or mol2")
 
-    parser.add_option('-o', '--outfile',
-            help = "Name of output SDF file with all mols in input directory.",
-            type = "string",
-            dest = 'outfile')
+    parser.add_argument('-o', '--outfile',
+            help = "Name of output SDF file with all mols in input directory.")
 
-    (opt, args) = parser.parse_args()
-    combineSDF(opt.infiles, opt.outfile)
+    args = parser.parse_args()
+    combineSDF(args.infiles, args.ftype, args.outfile)
 
