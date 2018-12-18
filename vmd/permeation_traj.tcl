@@ -4,7 +4,7 @@
 # permeation_traj.tcl
 #
 # Purpose:  Extract permeant z-position frames from input trajectories, then wrap output simulation in XY plane around permeant.
-# Usage  :  vmdt -e permeation_traj.tcl -args [todo]
+# Usage  :  vmdt -e permeation_traj.tcl -args inpsf skip dcd1 dcd2 ...
 # Example:  vmdt -e permeation_traj.tcl -args [todo]
 #           vmdt here stands for "vmd -dispdev none"
 #
@@ -30,6 +30,8 @@
 # Version: Nov 9 2018
 # ____________________________________________________________________________________
 
+# check these variables before using script
+
 # import move_atoms.tcl and pbchelp.tcl
 set sourcedir /dfs3/pub/limvt/gitmisc/vmd
 source $sourcedir/move_atoms.tcl
@@ -39,12 +41,23 @@ source $sourcedir/pbchelp.tcl
 set maxZ 40
 set minZ -41
 set spacing 1.0
-set inpsf 00_reference/popc_t2pos.psf
 
 # define solute atomselection for VMD
 set sol "resname GBI2"
 set high_to_low 1
-set inskip 100
+
+# ____________________________________________________________________________________
+
+
+# parse command line arguments
+set inpsf  [lindex $argv 0]
+set inskip [lindex $argv 1]
+
+set index 2
+while {$index < [llength $argv]} {
+    lappend dcdlist [lindex $argv $index]
+    incr index 1
+}
 
 # translate system
 proc sys_to_zero {all} {
@@ -65,16 +78,9 @@ puts $grid
 
 # read in system
 mol new $inpsf
-mol addfile win01/03/win01.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win02/03/win02.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win03/03/win03.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win04/03/win04.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win05/03/win05.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win06/03/win06.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win07/03/win07.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win08/03/win08.03.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win09/01/win09.01.dcd first 0 last -1 step $inskip waitfor all molid top
-mol addfile win10/02/win10.02.dcd first 0 last -1 step $inskip waitfor all molid top
+foreach mydcd $dcdlist {
+    mol addfile $mydcd first 0 last -1 step $inskip waitfor all molid top
+}
 
 # wrap system around bilayer
 package require pbctools
@@ -86,8 +92,8 @@ set lip [atomselect top "lipid and name C21 C31"]
 set all [atomselect top "all"]
 
 # take notes
-set outDataFile [open output.wrap w]
-puts $outDataFile "# Input PSF: TODO\n# Input DCD, skip $inskip: TODO\n"
+set outDataFile [open snapshots.wrap w]
+puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
 puts $outDataFile "# Distance (A) | Frame"
 mkdir tempwrapfiles
 
