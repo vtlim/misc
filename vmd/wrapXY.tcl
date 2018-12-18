@@ -14,6 +14,7 @@
 #  3. pbctools VMD package
 #
 # TODO:
+#  - remove need to specify sourcedir and hardcoded inpsf, indcds
 #  - split this into two scripts, (1) main for extracting frames, (2) external tcl for wrapXY
 #  - implement argument parsing
 #  - add output information writing on psf, dcd's, skip, min, max, etc.
@@ -29,17 +30,23 @@
 # Version: Nov 9 2018
 # ____________________________________________________________________________________
 
+# import move_atoms.tcl and pbchelp.tcl
+set sourcedir /dfs3/pub/limvt/gitmisc/vmd
+source $sourcedir/move_atoms.tcl
+source $sourcedir/pbchelp.tcl
 
 # define the range (inclusive) for collective variable distance
-set maxZ 44
-set minZ -8
+set maxZ 40
+set minZ -41
 set spacing 1.0
+set inpsf 00_reference/popc_t2pos.psf
 
 # define solute atomselection for VMD
-set sol "segname WTT and name OH2"
+set sol "resname GBI2"
 set high_to_low 1
 set inskip 100
 
+# translate system
 proc sys_to_zero {all} {
     set to_be_moved [measure center $all]
     set to_be_moved [vecinvert $to_be_moved]
@@ -57,13 +64,17 @@ for {set i 0} true {incr i} {
 puts $grid
 
 # read in system
-mol new ../00_reference/chipot_box.psf
-mol addfile win01-ens1/01/win01.01.dcd first 0 last -1 step $inskip waitfor all
-mol addfile win02-ens1/01/win02.01.dcd first 0 last -1 step $inskip waitfor all
-mol addfile win03-ens1/01/win03.01.dcd first 0 last -1 step $inskip waitfor all
-mol addfile win04-ens1/01/win04.01.dcd first 0 last -1 step $inskip waitfor all
-mol addfile win05-ens1/01/win05.01.dcd first 0 last -1 step $inskip waitfor all
-mol addfile win06-ens1/01/win06.01.dcd first 0 last -1 step $inskip waitfor all
+mol new $inpsf
+mol addfile win01/03/win01.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win02/03/win02.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win03/03/win03.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win04/03/win04.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win05/03/win05.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win06/03/win06.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win07/03/win07.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win08/03/win08.03.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win09/01/win09.01.dcd first 0 last -1 step $inskip waitfor all molid top
+mol addfile win10/02/win10.02.dcd first 0 last -1 step $inskip waitfor all molid top
 
 # wrap system around bilayer
 package require pbctools
@@ -82,7 +93,6 @@ mkdir tempwrapfiles
 
 # loop through frames to find snapshots of when solute has values at z-grid
 set n [expr {[molinfo top get numframes]-1}]
-source move_atoms.tcl
 for {set i 0} {$i < $n} {incr i} {
 
     # update frames and selections
@@ -91,7 +101,7 @@ for {set i 0} {$i < $n} {incr i} {
     $all frame $i
 
     # subtract z coords: (water) - (center of mass of lipids)
-    set dist [expr {[$wtt get z] - [lindex [measure center $lip] 2]}]
+    set dist [expr {[lindex [measure center $wtt] 2] - [lindex [measure center $lip] 2]}]
 
     # pseudo-round by formatting to single decimal place
     set dist [format "%.1f" $dist]
@@ -116,7 +126,7 @@ for {set i 0} {$i < $n} {incr i} {
 
 # delete trajectory (mol 0) now that we're done, and reload psf (mol 1)
 mol delete 0
-mol new ../00_reference/chipot_box.psf
+mol new $inpsf
 set molid 1
 # probably can make this part a fx bc repeated 2x
 set wtt [atomselect $molid $sol]
@@ -153,7 +163,6 @@ for {set i 0} {$i < $n} {incr i} {
     # inspired by https://github.com/frobnitzem/pbctools/blob/master/pbcwrap.tcl
     # using procs from /home/limvt/local/lib/vmd/plugins/noarch/tcl/pbctools2.8/pbcset.tcl
     # (can't source pbcset directly)
-    source pbchelp.tcl
     set cell [molinfo $molid get { a b c alpha beta gamma }]
     pbc_check_cell $cell
     set cell [pbc_vmd2namd $cell]
@@ -193,3 +202,4 @@ animate write dcd test.dcd waitfor all 1
 rm -r tempwrapfiles
 close $outDataFile
 exit
+
