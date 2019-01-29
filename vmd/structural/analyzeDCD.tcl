@@ -34,12 +34,12 @@ for {set i 3} {$i < $argc} {incr i} {
 
 # ========================== Load inputs ========================= #
 
-## read in data
-#mol new $inpsf
-#mol addfile $inpdb        ;# mol 0 == mol top
-#foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 frames equil
-#    mol addfile $dcd first 0 last -1 step $inskip waitfor all
-#}
+# read in data
+mol new $inpsf
+mol addfile $inpdb        ;# mol 0 == mol top
+foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 frames equil
+    mol addfile $dcd first 0 last -1 step $inskip waitfor all
+}
 
 # =============================================================== #
 
