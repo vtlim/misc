@@ -80,7 +80,7 @@ def plot_bar_group(plt, xlist, ylist, elist, horiz=False):
 
     """
     #colors = ['purple','lightseagreen']
-    legends = ['1','2','3','4','5','6','7']
+    legends = ['ZPVE-CCSD(T)/CBS limit','CCSD(T)/CBS limit','MP2/CBS limit','B3LYP-D3/cc-pVTZ','TPSSh-D3BJ/def2-TZVP','COSMO-B3LYP-D3/cc-pVTZ','COSMO-B3LYP-D3/cc-pVTZ']
 
 
     refx = -5000  # some start int for ref group
@@ -204,7 +204,7 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
     # include this threshold value as comment in input file for your record
     #plt.axhline(y=3.049, c='b', lw=2.0,ls='--',label='arg reference')
     #plt.axhline(y=5.012,c='r',lw=2.0,ls=':', label='ser reference')
-    plt.legend(loc=1)
+    plt.legend(loc=1,fontsize=8)
 
     # ====== TICK LABEL OPTIONS ======= #
     if horiz:

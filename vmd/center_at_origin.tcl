@@ -8,13 +8,13 @@
 # > On command line:
 #       * TODO, not yet supported
 # Full path names for sourcing:
-#   gpl: /DFS-L/old_beegfs_data/mobley/limvt/gitmisc/vmd/center_at_origin.tcl
-#   cas: /home/limvt/connect/greenplanet/goto-beegfs/gitmisc/vmd/center_at_origin.tcl
+#   gpl: /DFS-L/DATA/mobley/limvt/gitmisc/vmd/center_at_origin.tcl
+#   cas: /home/limvt/connect/greenplanet/goto-cluster/gitmisc/vmd/center_at_origin.tcl
 # By:       Victoria T. Lim
 # Version:  Nov 29 2018
 
 #source move_atoms.tcl
-source /home/limvt/connect/greenplanet/goto-beegfs/gitmisc/vmd/move_atoms.tcl
+source /home/limvt/connect/greenplanet/goto-cluster/gitmisc/vmd/move_atoms.tcl
 
 proc recenter { {seltext "all"} {molid 0} } {
     set sel [atomselect $molid $seltext]
