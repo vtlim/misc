@@ -5,18 +5,16 @@
 #
 # Purpose:  Extract permeant z-position frames from input trajectories, then wrap output simulation in XY plane around permeant.
 # Usage  :  vmdt -e permeation_traj.tcl -args inpsf skip dcd1 dcd2 ...
-# Example:  vmdt -e permeation_traj.tcl -args [todo]
+# Example:  vmdt -e permeation_traj.tcl -args 00_reference/popc_tneut.psf 50 win01/01/win01.01.dcd win02/01/win02.01.dcd
 #           vmdt here stands for "vmd -dispdev none"
 #
 # Dependencies
-#  1. move_atoms.tcl
-#  2. pbchelper.tcl
-#  3. pbctools VMD package
+#  1. pbctools VMD package
+#  2. wrapXY.tcl
+#      3. move_atoms.tcl
+#      4. pbchelper.tcl
 #
 # TODO:
-#  - remove need to specify sourcedir and hardcoded inpsf, indcds
-#  - split this into two scripts, (1) main for extracting frames, (2) external tcl for wrapXY
-#  - implement argument parsing
 #  - add output information writing on psf, dcd's, skip, min, max, etc.
 #
 # Assumptions
@@ -34,6 +32,8 @@
 
 # import move_atoms.tcl and pbchelp.tcl
 set sourcedir /dfs3/pub/limvt/gitmisc/vmd
+set sourcedir ~/connect/hpc/goto-tw/gitmisc/vmd
+
 source $sourcedir/move_atoms.tcl
 source $sourcedir/pbchelp.tcl
 
@@ -43,7 +43,7 @@ set minZ -41
 set spacing 1.0
 
 # define solute atomselection for VMD
-set sol "resname GBI2"
+set seltxt "resname GBIN"
 set high_to_low 1
 
 # ____________________________________________________________________________________
@@ -87,13 +87,14 @@ package require pbctools
 pbc wrap -centersel "resname POPC" -center com -compound res -all
 
 # set selections
-set wtt [atomselect top $sol]
+set sel [atomselect top $seltxt]
 set lip [atomselect top "lipid and name C21 C31"]
 set all [atomselect top "all"]
 
 # take notes
 set outDataFile [open snapshots.wrap w]
-puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
+puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist"
+puts $outDataFile "# Snapshots from $minZ to $maxZ in increments of $spacing Angstrom\n"
 puts $outDataFile "# Distance (A) | Frame"
 mkdir tempwrapfiles
 
@@ -102,12 +103,12 @@ set n [expr {[molinfo top get numframes]-1}]
 for {set i 0} {$i < $n} {incr i} {
 
     # update frames and selections
-    $wtt frame $i
+    $sel frame $i
     $lip frame $i
     $all frame $i
 
-    # subtract z coords: (water) - (center of mass of lipids)
-    set dist [expr {[lindex [measure center $wtt] 2] - [lindex [measure center $lip] 2]}]
+    # subtract z coords: (selection) - (center of mass of lipids)
+    set dist [expr {[lindex [measure center $sel] 2] - [lindex [measure center $lip] 2]}]
 
     # pseudo-round by formatting to single decimal place
     set dist [format "%.1f" $dist]
@@ -135,7 +136,7 @@ mol delete 0
 mol new $inpsf
 set molid 1
 # probably can make this part a fx bc repeated 2x
-set wtt [atomselect $molid $sol]
+set sel [atomselect $molid $seltxt]
 set all [atomselect $molid "all"]
 
 if {$high_to_low} {
@@ -157,12 +158,12 @@ if {$high_to_low} {
 }
 
 # loop over all frames to do wrapping
-set n [expr {[molinfo 1 get numframes]}]
+set n [expr {[molinfo $molid get numframes]}]
 for {set i 0} {$i < $n} {incr i} {
 
     # update frame to get accurate selections/unit cell
     animate goto $i
-    $wtt frame $i
+    $sel frame $i
     $all frame $i
 
     # get unit cell info
@@ -181,7 +182,7 @@ for {set i 0} {$i < $n} {incr i} {
 
     # compute coordinates for origin
     set origin {0 0 0}
-    set com [measure center $wtt]
+    set com [measure center $sel]
     set origin [vecadd $origin $com]
     # don't move the z origin (aka wrap in xy direction only)
     lset origin 2 0
