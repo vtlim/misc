@@ -8,7 +8,7 @@
 # Usage: while in VMD --
 #    [1] wrap your trajectory to box beforehand (VTL unsure)
 #    [2] in vmd:  source wrapXY.tcl
-#    [3] in vmd:  wrapXY "your vmd selection"
+#    [3] in vmd:  wrap_in_xy "your vmd selection"
 #
 # Dependencies
 #  1. move_atoms.tcl
@@ -39,7 +39,7 @@ proc sys_to_zero {all} {
     moveby $all $to_be_moved
 }
 
-proc wrapXY {seltxt {molid 0}} {
+proc wrap_in_xy {seltxt {molid 0}} {
 
     set sel [atomselect top $seltxt]
     set all [atomselect top "all"]
