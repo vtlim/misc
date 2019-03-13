@@ -1,6 +1,6 @@
 
 # MD simulation analysis in VMD with `analyzeDCD.tcl`
-Last updated: Jan 29 2019
+Last updated: Mar 12 2019
 
 ## Notes:
 
@@ -20,7 +20,8 @@ See function documentation in case of updates to what is listed here.
 | `count_wat_z`         | `count_wat_z outfile pre_z0 pre_z1 file.pdb`  | count num waters in [z0,z1]   |
 | `count_wat_near`      | `count_wat_near outfile dist vmd,sel,phrase`  | count num waters near sel     |
 | `count_hbonds`        | `count_hbonds pre_sel2 pre_sel1 outprefix`    | count hbonds between sels     |
-| `calc_dist`           | `calc_dist outfile pre0 pre1`                 | calc dist from sel0 to sel-is |
+| `calc_dihed`          | `calc_dihed outfile pre0 pre1 pre2 pre3`      | calc dihedral angle of 4 sels |
+| `calc_dist`           | `calc_dist outfile pre0 pre1`                 | calc dist from sel0 to sel1   |
 | `calc_dens_wat`       | `calc_dens_wat presel outprefix`              | calc volumetric density of sel|
 | `calc_sel_orient`     | `calc_sel_orient presel0 presel1 outprefix`   | calc vec direction wrt +z     |
 

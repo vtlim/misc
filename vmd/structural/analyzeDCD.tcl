@@ -552,6 +552,68 @@ proc calc_dist { outfile pre0 pre1 {pre2 ""} {pre3 ""} } {
 } ;# end of calc_dist
 
 
+proc calc_dihed { outfile pre0 pre1 pre2 pre3 } {
+    # ============================================================
+    # Measure dihedral angle of the given four atoms.
+    #
+    # Arguments
+    #  - outfile : string
+    #      Name of the output file.
+    #  - pre0 : string
+    #      Selection for atom of dihedral angle
+    #  - pre1 : string
+    #      Selection for atom of dihedral angle
+    #  - pre2 : string
+    #      Selection for atom of dihedral angle
+    #  - pre3 : string
+    #      Selection for atom of dihedral angle
+    # Returns
+    #  - (nothing)
+    # Example usage
+    #  - calc_dihed gbi1_win02.dat resname,GBI1,and,namd,N4 resname,GBI1,and,namd,C1 resname,GBI1,and,namd,N2 resname,GBI1,and,namd,C
+    # Notes
+    #  - This proc assumes that the four atoms are on the same molecule, else you may require trajectory align and/or wrap.
+    #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
+    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
+    # ============================================================
+    global inpsf
+    global inskip
+    global inpdb
+    global dcdlist
+
+    # process arguments
+    set sel0 [split $pre0 {,}]
+    set sel1 [split $pre1 {,}]
+    set sel2 [split $pre2 {,}]}
+    set sel3 [split $pre3 {,}]}
+
+
+    # define output file
+    set outDataFile [open $outfile w]
+    puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
+    puts $outDataFile "# Atom selections: $pre0 $pre1 $pre2 $pre3
+    puts $outDataFile "\n# Frame | Dihedral angle (degrees)"
+
+    # set atom selections
+    set atom1 [[atomselect top "$sel0"] get index]
+    set atom2 [[atomselect top "$sel1"] get index]
+    set atom3 [[atomselect top "$sel2"] get index]
+    set atom4 [[atomselect top "$sel3"] get index]
+
+    # take measurements
+    set dihedlist [measure dihed [list $atom1 $atom2 $atom3 $atom4] frame all]
+
+    # write output
+    for {set i 0} {$i < [llength $dihedlist]} {incr i} {
+        set ang [lindex $dihedlist $i]
+        if {$ang < 0} {set ang [expr {360+$ang}]}
+        puts $outDataFile "$i\t$ang"
+    }
+    close $outDataFile
+
+} ;# end of calc_dihed
+
+
 proc calc_dens_wat { {presel ""} {outprefix "watdens"} } {
     # ============================================================
     # Calculate volumetric density of water (or other given selection) over trajectory.
