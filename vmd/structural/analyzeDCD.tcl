@@ -1,5 +1,5 @@
 
-#
+# ============================================================== #
 # analyzeDCD.tcl
 #
 # By:       Victoria T. Lim
@@ -7,20 +7,21 @@
 #
 # Usage:
 #  1. vmd -dispdev none -e file.tcl -args inpsf inskip inpdb indcd [indcd2 indcd3 ...]
-#  2. [call some analysis function in this script in VMD terminal/console, see documentation]
+#  2. [call some analysis function in VMD terminal/console, see documentation]
 #
 # Full path names for sourcing:
 #   - gpl: /beegfs/DATA/mobley/limvt/gitmisc/vmd/structural/analyzeDCD.tcl
-#   - cas: /home/limvt/connect/greenplanet/goto-beegfs/gitmisc/vmd/structural/analyzeDCD.tcl
+#   - cas: /home/limvt/connect/hpc/goto-tw/gitmisc/vmd/structural/analyzeDCD.tcl
 #
 # Notes:
 #   - Read in trajectory data before loading functions, else doesn't load properly in visual mode with GUI.
-#   - Don't wrap outside of indiv functions. rmsd/rmsf align using pdb reference, which may not have pbc params for wrap
+#   - Don't wrap outside of indiv functions. rmsd/rmsf refers to pdb to align; pdb may not have pbc params for wrap
 #   - To load functions only not trajectories,
 #       [1] Comment out the "mol new ... mol addfile" section
 #       [2] Call "source thisscript.tcl" after already in VMD
 #       [3] May need to set variables for writing (dcdlist, etc.)
 #
+# Last updated: Mar 12 2019
 
 # ========================== Variables ========================= #
 

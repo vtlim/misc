@@ -5,6 +5,7 @@ Last updated: Jan 29 2019
 ## Notes:
 
 1. `vmdt` is my alias for `vmd -dispdev none` for non-GUI loading of VMD.
+2. Original `polar_plot.py` from <https://github.com/vtlim/Hv1/tree/master/04_fep/postFEPvanilla/analysis/6_dists>
 
 ## Available functions
 See function documentation in case of updates to what is listed here.
