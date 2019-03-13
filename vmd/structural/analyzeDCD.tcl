@@ -570,7 +570,7 @@ proc calc_dihed { outfile pre0 pre1 pre2 pre3 } {
     # Returns
     #  - (nothing)
     # Example usage
-    #  - calc_dihed gbi1_win02.dat resname,GBI1,and,namd,N4 resname,GBI1,and,namd,C1 resname,GBI1,and,namd,N2 resname,GBI1,and,namd,C
+    #  - calc_dihed gbi1_win02.dat resname,GBI1,and,name,N4 resname,GBI1,and,name,C1 resname,GBI1,and,name,N2 resname,GBI1,and,name,C
     # Notes
     #  - This proc assumes that the four atoms are on the same molecule, else you may require trajectory align and/or wrap.
     #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
@@ -584,14 +584,14 @@ proc calc_dihed { outfile pre0 pre1 pre2 pre3 } {
     # process arguments
     set sel0 [split $pre0 {,}]
     set sel1 [split $pre1 {,}]
-    set sel2 [split $pre2 {,}]}
-    set sel3 [split $pre3 {,}]}
+    set sel2 [split $pre2 {,}]
+    set sel3 [split $pre3 {,}]
 
 
     # define output file
     set outDataFile [open $outfile w]
     puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
-    puts $outDataFile "# Atom selections: $pre0 $pre1 $pre2 $pre3
+    puts $outDataFile "# Atom selections: $pre0 $pre1 $pre2 $pre3"
     puts $outDataFile "\n# Frame | Dihedral angle (degrees)"
 
     # set atom selections

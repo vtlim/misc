@@ -40,6 +40,7 @@ proc sys_to_zero {all} {
 }
 
 proc wrap_in_xy {seltxt {molid 0}} {
+    puts "wrapping around $seltxt..."
 
     set sel [atomselect top $seltxt]
     set all [atomselect top "all"]

@@ -1,8 +1,15 @@
 
-# Purpose: Plot timeseries of a given angle on a polar coordinate plot.
-#   Options: (1) scatter plot, (2) histogram of angle.
-# Example:
-#   python polar_plot.py -i test.dat --hist --time [-f test.fepout] [-j test1.dat test2.dat]
+"""
+polar_plot.py
+
+Purpose: Plot histogram of a given angle on a polar coordinate plot.
+  Options: (1) scatter plot, (2) histogram of angle.
+
+Example:    python polar_plot.py -i test.dat [-j test1.dat test2.dat]
+
+Version:    Mar 12 2019
+By:         Victoria T. Lim
+"""
 
 import os, sys
 import numpy as np
@@ -18,7 +25,7 @@ def load_file(filename):
 
     return times, angles
 
-def polarHist(filename, filelist=[], bins_number=72):
+def polar_hist(filename, filelist=[], bins_number=72):
     """
     Reference: https://tinyurl.com/y9wzfo6f
     """
@@ -53,10 +60,11 @@ def polarHist(filename, filelist=[], bins_number=72):
         for bar in bars:
             bar.set_alpha(0.5)
     # IF you want to change the histogram range, do so here
-    ax.set_ylim(0,50)
+    ax.set_ylim(0,100)
 
     for xtick in ax.get_xticklabels():
         xtick.set_fontsize(18)
+    plt.savefig('output.png')
     plt.show()
 
 
@@ -64,29 +72,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input",
                         help="File with timeseries data. Time in first column,"
-                             " measurement in second column. # lines ignored.")
+                             " measurement in second column. # = commented.")
     parser.add_argument("-j", "--jnput", nargs='*',
-                        help="MORE files with timeseries data to histogram "
-                             "ALONGSIDE the input file specified. Can specify "
-                             "multiple files here, separated by space.")
-    parser.add_argument("-f", "--fepout",
-                        help="NAMD fepout file, from which dE values are used"
-                             " to color scatter plot markers.")
-    parser.add_argument("-s", "--fepskip", type=int, default=10,
-                        help="Take every Nth point of .fepout data. "
-                             "Specify 1 to use every data point.")
-    parser.add_argument("--hist", action="store_true", default=False,
-                        help="")
-
+                        help="Data to histogram separately, in diff. colors. "
+                             "Specify 1+ files here separated by space.")
     args = parser.parse_args()
     opt = vars(args)
 
     # make sure input file is specified AND exists
     if not opt['input'] or not os.path.exists(opt['input']):
         sys.exit("\nERROR: Specify a valid input file.\n")
-    # make sure fepout file exists, IF specified
-    if opt['fepout'] and not os.path.exists(opt['fepout']):
-        sys.exit("\nERROR: Specify valid fepout file.\n")
     # check additional files if specified
     if opt['jnput']:
         for f in opt['jnput']:
@@ -95,4 +90,4 @@ if __name__ == "__main__":
     else:
         opt['jnput'] = []
 
-    polarHist(opt['input'], opt['jnput'])
+    polar_hist(opt['input'], opt['jnput'])
