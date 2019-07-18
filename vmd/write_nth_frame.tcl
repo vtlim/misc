@@ -27,7 +27,7 @@ foreach mydcd $dcdlist {
 }
 
 # Create system selection
-set sel [atomselect top "protein and noh"]  ;# <--- check me <---
+set sel [atomselect top "noh and (protein or resname PHE)"]  ;# <--- check me <---
 
 # Loop over every frame and write pdb
 set n [expr {[molinfo top get numframes]}]
