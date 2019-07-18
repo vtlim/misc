@@ -1,7 +1,7 @@
 
 # Purpose:  Write every nth frame from a trajectory as a separate PDB file.
 # Usage:    vmd -dispdev text -e write_nth_frame.tcl -args N prefix file.psf file.dcd [file2.dcd]
-# Version:  June 26 2019
+# Version:  Jul 18 2019
 
 # Note: Modify the vmd selection beforehand if need be (sel variable)
 
@@ -27,13 +27,20 @@ foreach mydcd $dcdlist {
 }
 
 # Create system selection
-set sel [atomselect top "protein and noh"]
+set sel [atomselect top "protein and noh"]  ;# <--- check me <---
 
 # Loop over every frame and write pdb
 set n [expr {[molinfo top get numframes]}]
 for {set i 0} {$i < $n} {incr i} {
 
+    # update selection
     $sel frame $i
+
+    # OPTIONAL: renumber residues consecutively
+    # as opposed to all subunits having matching resids
+    $sel set resid [$sel get residue]
+
+    # write output
     animate write pdb ${prefix}_$i.pdb beg $i end $i skip 1 sel $sel top
 }
 
