@@ -11,7 +11,7 @@ For specific plot customizations (e.g., grid), see the git version of the `plotX
 4. [2] Separate input into 50 lines, plotted in 5 windows  
     * `python plotXY.py -i xy4.dat -g 50 -o output4.png`
 
-Git commit history alongside examples:
+Git commit:
 
-[1]: `ad57548`
-[2]: `54120c9`
+[1] `ad57548`  
+[2] `54120c9`
