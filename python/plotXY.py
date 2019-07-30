@@ -25,7 +25,6 @@
 import os
 import sys
 import numpy as np
-from pymbar import timeseries
 from functools import reduce
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -76,6 +75,8 @@ def subsample(x, y_mat, num_cols=None):
         multi-dimesional array in which z_mat[i][j] is the jth value in the ith data series.
 
     """
+    from pymbar import timeseries
+
     x_mat = []
     z_mat = [] # subsampled y_mat
 
@@ -262,23 +263,26 @@ def xyPlot(**kwargs):
             x = 0.002*np.asarray(range(len(y_mat)),dtype=np.float32)
 
 
-    ### Initialize figure.
-    ### https://matplotlib.org/examples/color/colormaps_reference.html
-    #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols)) # colors for plot
-    colors = mpl.cm.tab20(np.linspace(0, 1, 10)) # colors for plot
+    ### Define cmap color map.
+    #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
+    colors = mpl.cm.tab20(np.linspace(0, 1, 10))
 
     num_plots = 1
     if num_groups != 0:
         factors = factorize(num_groups)
         num_plots = int(input("\nInput with {} data points will be separated "
               "into {} groups for plotting.\nDo you want to separate these "
-              "groups into separate subplots?\nType 0 for no, or type an "
+              "groups into separate subplots?\nType 1 for no, or type an "
               "integer for the number of subplots desired.\nTo evenly distribute "
               "the lines, use one of {}. ".format(len(x),num_groups,factors)))
         lines_per_plot = int(num_groups/num_plots)
-        colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
+
+        # color map
+        colors = mpl.cm.tab10(np.linspace(0, 1, 10))
+        #colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
         #colors = mpl.cm.bwr(np.linspace(0, 1, lines_per_plot))
 
+    ### Initialize figure.
     fig, axs = plt.subplots(1, num_plots, sharey=True)
     if num_plots == 1:
         curr_ax = axs
