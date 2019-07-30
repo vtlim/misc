@@ -16,5 +16,5 @@ For specific plot customizations (e.g., grid), see the git version of the `plotX
 Git commit:
 
 [1] `ad57548`  
-[2] `54120c9`
-[3] `409ca99`
+[2] `54120c9`  
+[3] `409ca99`  
