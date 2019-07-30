@@ -1,26 +1,31 @@
 #!/usr/bin/python
 
-# Generate XY line plots from text data file.
-#   Options include plotting specific columns, separating data to subplots,
-#   subsampling data, taking moving average over data, and plotting alongside
-#   uncertainty values from another data file.
-# This script can also be imported for subsampling in other scripts/plots.
-#   - sys.path.insert(0,'/DFS-L/DATA/mobley/limvt/analysis')
-#   - import plotXY
-#   - plotXY.moving_average(ydata, N)
-#
-# By: Victoria T. Lim
-#
-# TODO:
-#   - Write documentation
-#
-# Notes:
-#   - Subsampling with grouped data works by first separating the data into
-#     the specified number of groups, THEN subsampling.
-#   - If combining data together from multiple files, Google Sheets can help.
-#     Then copy from sheets into vim window.
-#     Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
-#
+"""
+plotXY.py
+
+Generate XY line plots from text data file.
+  Options include plotting specific columns, separating data to subplots,
+  subsampling data, taking moving average over data, and plotting alongside
+  uncertainty values from another data file.
+
+This script can also be imported for subsampling in other scripts/plots.
+  - sys.path.insert(0,'/DFS-L/DATA/mobley/limvt/analysis')
+  - import plotXY
+  - plotXY.moving_average(ydata, N)
+
+Notes:
+  - Subsampling with grouped data works by first separating the data into
+    the specified number of groups, THEN subsampling.
+  - If combining data together from multiple files, Google Sheets can help.
+    Then copy from sheets into vim window.
+    Then replace variable number of spaces with this cmd :%s/ \{2,}/ /g
+
+By: Victoria T. Lim
+
+TODO:
+  - Write documentation
+
+"""
 
 import os
 import sys
@@ -170,10 +175,21 @@ def factorize(n):
 def formatFig(ax1, plt, fig, **kwargs):
     """
     """
+    # plot limits
+    #axes.set_xlim([min(x)-2,max(x)+2])
+    #ax1.set_ylim([0, 20])
+
+    # custom text on plot
+    #ax1.text(2,11,"A",fontsize=10)
+
+    plt.grid()
+    plt.grid(which='minor', alpha=0.2)
+    plt.minorticks_on()
 
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
         legend=True
+
     if opt['publish']:
         tSize = 12
         xSize = 8
@@ -187,6 +203,7 @@ def formatFig(ax1, plt, fig, **kwargs):
         xSize = 18
         ySize = 18
         kSize = 16
+        fig.set_size_inches(11, 8.5)
         if 'legend' in locals():
             leg = ax1.legend(leglabel,loc='upper left')
 
@@ -291,17 +308,18 @@ def xyPlot(**kwargs):
         opt['legend'] = ';'.join(str(i) for i in range(1,1+lines_per_plot))
         curr_ax = axs[idx]
 
-    ### Plot the data.
     for i in range(num_cols):
+
+        ### Determine which data to plot.
         if num_groups != 0: # most specific case
             y = y_mat[i]
             x = np.arange(len(y))
-            c = colors[i%lines_per_plot]
-            if (num_plots != 0) and (i>0) and (i%lines_per_plot == 0):
+            c = colors[i % lines_per_plot]
+            if (num_plots != 0) and (i > 0) and (i % lines_per_plot == 0):
                 idx += 1
                 # format the current subplot then get next legend ready
-                formatFig(curr_ax,plt,fig,**opt)
-                opt['legend'] = ';'.join(str(i) for i in range(i+1,i+1+lines_per_plot))
+                formatFig(curr_ax, plt, fig, **opt)
+                opt['legend'] = ';'.join(str(i) for i in range(i+1, i+1+lines_per_plot))
                 # change to next subplot
                 print("Switching to new subplot...")
                 curr_ax = axs[idx]
@@ -318,21 +336,24 @@ def xyPlot(**kwargs):
         else:
             y = y_mat[:,i]
             c = colors[i]
+
+        ### Plot the data.
+        plot_args = {'color':c, 'lw':'0.8'}
         print(i, len(x), y.shape)
+
         if uncertf is not None: # UNTESTED as of 4/6/18
-            curr_ax.errorbar(x,y,yerr=uncerts[:,i],capsize=0.8,lw=0.8,color=c)
+            curr_ax.errorbar(x, y, yerr=uncerts[:,i], capsize=0.8, **plot_args)
         else:
-            curr_ax.plot(x, y, lw=0.8, color=c) # thinner line
+            curr_ax.plot(x, y, **plot_args)
+
+            # add points with the line plot
+            curr_ax.scatter(x, y, **plot_args, s=2)
 
     ### Format figure.
-    axes = plt.gca()
-#    axes.set_xlim([min(x)-2,max(x)+2])
-#    axes.set_ylim([-0.1,3])
-    axes.set_ylim([0, 20])
-#    ax1.text(2,11,"A",fontsize=10) # custom text on plot
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
-    formatFig(curr_ax,plt,fig,**opt)
+
+    formatFig(curr_ax, plt, fig, **opt)
 
     ### Save figure.
     if opt['publish']:
