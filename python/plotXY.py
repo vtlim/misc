@@ -183,8 +183,8 @@ def formatFig(ax1, plt, fig, **kwargs):
     #ax1.text(2,11,"A",fontsize=10)
 
     plt.grid()
-    plt.grid(which='minor', alpha=0.2)
-    plt.minorticks_on()
+    #plt.grid(which='minor', alpha=0.2)
+    #plt.minorticks_on()
 
     if opt['legend'] is not None:
         leglabel = opt['legend'].split(';')
@@ -203,7 +203,7 @@ def formatFig(ax1, plt, fig, **kwargs):
         xSize = 18
         ySize = 18
         kSize = 16
-        fig.set_size_inches(11, 8.5)
+        #fig.set_size_inches(11, 8.5)
         if 'legend' in locals():
             leg = ax1.legend(leglabel,loc='upper left')
 
@@ -338,7 +338,7 @@ def xyPlot(**kwargs):
             c = colors[i]
 
         ### Plot the data.
-        plot_args = {'color':c, 'lw':'1.5'}
+        plot_args = {'color':c, 'lw':1.5}
         print(i, len(x), y.shape)
         if uncertf is not None:
             curr_ax.errorbar(x, y, yerr=uncerts[:,i], capsize=1.5, **plot_args)
@@ -355,8 +355,6 @@ def xyPlot(**kwargs):
     axes.set_ylim([0, 20])
 
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
-
-    plt.grid()
 
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
