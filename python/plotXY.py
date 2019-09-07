@@ -315,17 +315,21 @@ def xyPlot(**kwargs):
             y = y_mat[:,i]
             c = colors[i]
         print(i, len(x), y.shape)
-        if uncertf is not None: # UNTESTED as of 4/6/18
-            curr_ax.errorbar(x,y,yerr=uncerts[:,i],capsize=0.8,lw=0.8,color=c)
+        if uncertf is not None:
+            curr_ax.errorbar(x,y,yerr=uncerts[:,i],capsize=1.5,lw=1.5,color=c)
         else:
-            curr_ax.plot(x, y, lw=0.8, color=c) # thinner line
+            curr_ax.plot(x, y, lw=1.5, color=c)
 
     ### Format figure.
     axes = plt.gca()
 #    axes.set_xlim([min(x)-2,max(x)+2])
 #    axes.set_ylim([-0.1,3])
     axes.set_ylim([0, 20])
+
 #    ax1.text(2,11,"A",fontsize=10) # custom text on plot
+
+    plt.grid()
+
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
     formatFig(curr_ax,plt,fig,**opt)
