@@ -1,7 +1,7 @@
 
 # Contents
 
-README last updated: Nov 9 2018  
+This file last updated: Nov 9 2018  
 
 * Directories
   * `examples/` 
@@ -18,7 +18,7 @@ README last updated: Nov 9 2018
   * `column_sum.py` 
   * `plotBar.py` - Customizable bar plots.
   * `plotScatter.py`
-  * `plotXY.py` - Generates XY line plots from input ASCII data file of one `x` column and one or more `y` columns. Features:
+  * `plotXY.py` - Generates XY line plots from input ASCII data file of one `x` column and one or more `y` columns. This script can:
     * Subsample based on correlation time
     * Subsample based on running averages
     * Take in file of uncertainties to plot error bars
