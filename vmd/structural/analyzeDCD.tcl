@@ -48,6 +48,7 @@ package require pbctools
 package require hbonds
 set __before [info procs] ; # get list of avail functions before loading this script
 
+atomselect macro hv1_backbone { protein and backbone and {{resid 100 to 125} or {resid 134 to 160} or {resid 168 to 191} or {resid 198 to 220}} }
 
 proc average L {
     # ============================================================
@@ -73,8 +74,8 @@ proc align_backbone { {refmolid 0} } {
 
     set wrapmolid 0
     set all [atomselect 0 "all"]
-    set compprot [atomselect 0 "protein and backbone and {{resid 100 to 125} or {resid 134 to 160} or {resid 168 to 191} or {resid 198 to 220}}"]
-    set refprot [atomselect $refmolid "protein and backbone and {{resid 100 to 125} or {resid 134 to 160} or {resid 168 to 191} or {resid 198 to 220}}" frame 0]
+    set compprot [atomselect 0 hv1_backbone]
+    set refprot [atomselect $refmolid hv1_backbone frame 0]
 
     set num_steps [molinfo 0 get numframes]
     for {set frame 0} {$frame < $num_steps} {incr frame} {
@@ -776,6 +777,8 @@ proc get_com_z { presel {outfile "z_com.dat"} } {
 
     # set and create vmd selection
     set comsel [atomselect top [split $presel {,}]]
+    # optionally, set reference selectoin
+    set refsel [atomselect top hv1_backbone]
 
     # open file for writing output
     set outDataFile [open $outfile w]
@@ -793,9 +796,11 @@ proc get_com_z { presel {outfile "z_com.dat"} } {
 
         # update selection to this frame
         $comsel frame $frame
+        $refsel frame $frame
 
         # get center of mass z coordinate
-        set z_now [lindex [measure center "$comsel"] 2]
+        #set z_now [lindex [measure center "$comsel"] 2]
+        set z_now [expr {[lindex [measure center $comsel] 2] - [lindex [measure center $refsel] 2]}]
 
         # write to file
         puts $outDataFile "$curr_line\t$z_now"
