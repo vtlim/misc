@@ -42,7 +42,7 @@ foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 
     mol addfile $dcd first 0 last -1 step $inskip waitfor all
 }
 
-# =============================================================== #
+# ===================== Helper functions ======================== #
 
 package require pbctools
 package require hbonds
@@ -106,6 +106,28 @@ proc diff {before after} {
 } ;# end of diff
 
 
+proc wrap_and_align {center_sel moltop} {
+    # ============================================================
+    # Wrap system in molid 0. Align using align_backbone function
+    # to align around Hv1 backbone.
+    # This function can be replaced or edited to align around
+    # a different selection.
+    # ============================================================
+
+    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
+    set n [molinfo 0 get numframes]
+    pbc wrap -molid 0 -compound fragment -center com -centersel $center_sel -first 1 -last $n ;# zero-based index
+
+    # align system AFTER wrapping
+    puts "Aligning system by Hv1 transmembrane backbone..."
+    align_backbone $moltop
+
+} ;# end of wrap_and_align
+
+
+# ===================== Analysis functions ====================== #
+
+
 proc calc_rmsd_hv1 {outprefix {level segment} {gbi 0} {inpdb ""} } {
     # ============================================================
     # Measure RMSD for Hv1. System is aligned by transmembrane
@@ -144,12 +166,8 @@ proc calc_rmsd_hv1 {outprefix {level segment} {gbi 0} {inpdb ""} } {
         set moltop 1
     }
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "protein" -first 1 -last $n ;# zero-based index
-    # align system AFTER wrapping
-    puts "Aligning system by Hv1 transmembrane backbone..."
-    align_backbone $moltop
+    # wrap around given selection, then align around hv1 backbone wrt moltop
+    wrap_and_align "protein" $moltop
 
     # set groups for RMSD calculation
     puts "Defining groups for RMSD calculation..."
@@ -317,12 +335,9 @@ proc count_wat_z { outfile pre_z0 pre_z1 {inpdb ""} } {
         set moltop 1
     }
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "protein" -first 1 -last $n ;# zero-based index
-    # align system AFTER wrapping
-    puts "Aligning system by Hv1 transmembrane backbone..."
-    align_backbone $moltop
+    # wrap around given selection, then align around hv1 backbone wrt moltop
+    wrap_and_align "protein" $moltop
+
     puts "Counting waters..."
 
     # define output file
@@ -738,6 +753,57 @@ proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
     close $outDataFile
 
 } ;# end of calc_sel_orient
+
+
+proc get_com_z { presel {outfile "z_com.dat"} } {
+    # ============================================================
+    # For the input selection, get its center of mass Z position.
+    # Specify selection with no spaces, but use commas for multiple words.
+    # See example usage.
+    #
+    # Arguments
+    #  - outfile : string
+    #      Name of the output file
+    #  - presel : string
+    #      VMD selection
+    # Returns
+    #  - (nothing)
+    # Example usage
+    #  - get_com_z resname,HIF z_com_npt01.dat
+    # ============================================================
+    global inpsf
+    global dcdlist
+
+    # set and create vmd selection
+    set comsel [atomselect top [split $presel {,}]]
+
+    # open file for writing output
+    set outDataFile [open $outfile w]
+    puts $outDataFile "# Data from files:\n#  $inpsf\n#  $dcdlist\n"
+    puts $outDataFile "# Frame | COM Z position (Angstroms)"
+
+    # wrap around given selection, then align around hv1 backbone wrt moltop
+    wrap_and_align "protein" 0
+
+    # loop over frames
+    set num_steps [molinfo 0 get numframes]
+    for {set frame 0} {$frame < $num_steps} {incr frame} {
+        if {[expr $frame % 100 == 0]} {puts $frame}
+        set curr_line "$frame\t"
+
+        # update selection to this frame
+        $comsel frame $frame
+
+        # get center of mass z coordinate
+        set z_now [lindex [measure center "$comsel"] 2]
+
+        # write to file
+        puts $outDataFile "$curr_line\t$z_now"
+    }
+
+    close $outDataFile
+
+} ;# end of get_com_z
 
 
 # =============================================================== #
