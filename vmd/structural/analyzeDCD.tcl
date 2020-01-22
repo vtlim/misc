@@ -46,7 +46,6 @@ foreach dcd $dcdlist {    ;# maybe alter the first step to read in if FEP bc 50 
 # ===================== Helper functions ======================== #
 
 package require pbctools
-package require hbonds
 set __before [info procs] ; # get list of avail functions before loading this script
 
 atomselect macro hv1_backbone { protein and backbone and {{resid 100 to 125} or {resid 134 to 160} or {resid 168 to 191} or {resid 198 to 220}} }
@@ -57,6 +56,27 @@ proc average L {
     # ============================================================
     expr ([join $L +])/[llength $L].
 }
+
+
+proc diff {before after} {
+    # ============================================================
+    # Extract differences from two lists. Used in this script to
+    # list available analysis functions after loading trajectories.
+    #
+    # References
+    #  - https://tinyurl.com/yccerb3k
+    # ============================================================
+    set result [list]
+    foreach name $before {
+        set procs($name) 1
+    }
+    foreach name $after {
+        if { ![info exists procs($name)] } {
+            lappend result $name
+        }
+    }
+    return [lsort $result]
+} ;# end of diff
 
 
 proc align_backbone { {refmolid 0} } {
@@ -84,28 +104,17 @@ proc align_backbone { {refmolid 0} } {
         $all frame $frame
         $all move [measure fit $compprot $refprot]
     }
-}
+} ;# end of align_backbone
 
 
-proc diff {before after} {
-    # ============================================================
-    # Extract differences from two lists. Used in this script to
-    # list available analysis functions after loading trajectories.
-    #
-    # References
-    #  - https://tinyurl.com/yccerb3k
-    # ============================================================
-    set result [list]
-    foreach name $before {
-        set procs($name) 1
-    }
-    foreach name $after {
-        if { ![info exists procs($name)] } {
-            lappend result $name
-        }
-    }
-    return [lsort $result]
-} ;# end of diff
+proc wrap_only { {top_index 0} {wrap_sel "protein"} } {
+
+    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
+    # this function DOES NOT ALIGN bc some calculations only rely on independent distances of each frame
+    set n [molinfo $top_index get numframes]
+    pbc wrap -molid $top_index -compound fragment -center com -centersel "$wrap_sel" -first 1 -last $n ;# zero-based index
+
+} ;# end of wrap_only
 
 
 proc wrap_and_align {center_sel moltop} {
@@ -116,9 +125,8 @@ proc wrap_and_align {center_sel moltop} {
     # a different selection.
     # ============================================================
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel $center_sel -first 1 -last $n ;# zero-based index
+    # wrap but do not align
+    wrap_only $moltop "$center_sel"
 
     # align system AFTER wrapping
     puts "Aligning system by Hv1 transmembrane backbone..."
@@ -408,10 +416,8 @@ proc count_wat_near { outfile dist args } {
        lappend sellist [split $prelig {,}]
     }
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    # this function DOES NOT ALIGN bc it calculates distances in each frame independently
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "protein" -first 1 -last $n ;# zero-based index
+    # wrap but do not align
+    wrap_only 0 "protein"
 
     # define output file
     set outDataFile [open $outfile w]
@@ -444,50 +450,45 @@ proc count_wat_near { outfile dist args } {
 } ;# end of count_wat_near
 
 
-proc count_hbonds { pre_sel2 {pre_sel1 "protein,or,water"} {outprefix "hbondsProtWat"} } {
+proc count_hbonds { seltxt1 seltxt2 {outprefix "hbonds"} } {
     # ============================================================
-    # Quantify number of hbonds from $pre_sel1 to $pre_sel2.
-    # Specify selection with no spaces, but use commas for multiple words.
-    # See example usage.
+    # Quantify number of hbonds from seltxt1 to seltxt2.
+    # Make sure to WRAP TRAJECTORY before use. (not called here
+    # in case of already wrapped trajectory from other analysis)
     #
     # Arguments
-    #  - pre_sel2 : string
+    #  - seltxt1: string
     #      VMD selection
-    #  - pre_sel1 : string
-    #      VMD selection. Default is "protein or water".
+    #  - seltxt2 : string
+    #      VMD selection
     #  - outprefix : string
     #       Basename of the output files for .dat, -details.dat, .log
-    #       Default is "hbondsProtWat".
+    #       Default is "hbonds".
     # Returns
     #  - (nothing)
     # Example usage
-    #  - count_hbonds protein,and,resid,211
-    # Notes
-    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
+    #  - count_hbonds "resname GBI1" "protein and resid 211"
     # ============================================================
+    package require hbonds
+
     global inpsf
     global inskip
     global inpdb
     global dcdlist
 
-    # translate the comma selection phrase to spaced vmd selections
-    set sel1 [split $pre_sel1 {,}]
-    set sel2 [split $pre_sel2 {,}]
-
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    # this function DOES NOT ALIGN bc it calculates distances in each frame independently
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "protein" -first 1 -last $n ;# zero-based index
+    # define atom selections
+    set sel1 [atomselect top "$seltxt1"]
+    set sel2 [atomselect top "$seltxt2"]
 
     # evaluate hbonds
-    hbonds -sel1 [atomselect 0 "$sel1"] -sel2 [atomselect 0 "$sel2"] -writefile yes -upsel yes -frames all -dist 3.5 -ang 40 -plot yes -log ${outprefix}.log -writefile yes -outfile ${outprefix}.dat -polar yes -DA both -type unique -detailout ${outprefix}-details.dat
+    #hbonds -sel1 $sel1 -sel2 $sel2 -writefile yes -upsel yes -frames all -dist 3.5 -ang 40 -plot no -log ${outprefix}.log -outfile ${outprefix}.dat -type unique -detailout ${outprefix}-details.dat
+    hbonds -sel1 $sel1 -sel2 $sel2 -writefile yes -upsel yes -frames all -dist 3.5 -ang 40 -plot no -log ${outprefix}.log -outfile ${outprefix}.dat
 
     # append trajectory information to output
     set outDataFile [open ${outprefix}.log a]
     puts $outDataFile "\n# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist"
-    puts $outDataFile "# pbc wrap centersel: protein"
-    puts $outDataFile "# Selection 1: $sel1"
-    puts $outDataFile "# Selection 2: $sel2\n"
+    puts $outDataFile "# Selection 1: $seltxt1"
+    puts $outDataFile "# Selection 2: $seltxt2\n"
     close $outDataFile
 
 
@@ -529,10 +530,8 @@ proc calc_dist { outfile pre0 pre1 {pre2 ""} {pre3 ""} } {
     if { $pre2 != "" } {set sel2 [split $pre2 {,}]}
     if { $pre3 != "" } {set sel3 [split $pre3 {,}]}
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    # this function DOES NOT ALIGN bc it calculates distances in each frame independently
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "protein" -first 1 -last $n ;# zero-based index
+    # wrap but do not align
+    wrap_only 0 "protein"
 
     # define output file
     set outDataFile [open $outfile w]
@@ -723,9 +722,8 @@ proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
     set sel1 [atomselect top "[split $presel1 {,}]"]
     set whole [atomselect top all]
 
-    # wrap and ignore given pdb -- sometimes has error (a=0.000000 b=0.000000 c=0.000000)
-    set n [molinfo 0 get numframes]
-    pbc wrap -molid 0 -compound fragment -center com -centersel "resname POPC" -first 1 -last $n ;# zero-based index
+    # wrap but do not align
+    wrap_only 0 "resname POPC"
 
     # write trajectory information to output
     set outDataFile [open $outprefix.dat w]
@@ -812,6 +810,8 @@ proc get_com_z { presel {outfile "z_com.dat"} } {
     close $outDataFile
 
 } ;# end of get_com_z
+
+
 
 
 # =============================================================== #
