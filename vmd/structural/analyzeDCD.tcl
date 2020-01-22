@@ -9,20 +9,21 @@
 #  1. vmd -dispdev none -e file.tcl -args inpsf inskip inpdb indcd [indcd2 indcd3 ...]
 #  2. [call some analysis function in VMD terminal/console, see documentation]
 #
+# Usage of imported functions only (if you already have a trajectory loaded):
+#  1. Comment out the "mol new ... mol addfile" part of this code.
+#  2. Call "source analyzeDCD.tcl" in the active VMD session.
+#  3. Some functions may need you to set variables (dcdlist, etc.) to write output files.
+#
 # Full path names for sourcing:
 #   - gpl: /beegfs/DATA/mobley/limvt/gitmisc/vmd/structural/analyzeDCD.tcl
 #   - cas: /home/limvt/connect/hpc/goto-tw/gitmisc/vmd/structural/analyzeDCD.tcl
 #
-# Notes:
+# VTL notes:
 #   - Read in trajectory data before loading functions, else doesn't load properly in visual mode with GUI.
 #   - Don't wrap outside of indiv functions. rmsd/rmsf refers to pdb to align; pdb may not have pbc params for wrap
-#   - To load functions only not trajectories,
-#       [1] Comment out the "mol new ... mol addfile" section
-#       [2] Call "source thisscript.tcl" after already in VMD
-#       [3] May need to set variables for writing (dcdlist, etc.)
 #
-# Last updated: Mar 12 2019
-
+# Last updated: Jan 22 2020
+#
 # ========================== Variables ========================= #
 
 set inpsf [lindex $argv 0]
@@ -777,8 +778,10 @@ proc get_com_z { presel {outfile "z_com.dat"} } {
 
     # set and create vmd selection
     set comsel [atomselect top [split $presel {,}]]
-    # optionally, set reference selectoin
-    set refsel [atomselect top hv1_backbone]
+
+    # optionally, set reference selection
+    #set refsel [atomselect top hv1_backbone]
+    set refsel [atomselect top "name C21 C31"]
 
     # open file for writing output
     set outDataFile [open $outfile w]
