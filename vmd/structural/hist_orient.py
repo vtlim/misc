@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_hists(infiles):
-    colors=['firebrick','gold','limegreen','royalblue','darkorchid']
+    colors=['firebrick','darkorange','gold','limegreen','royalblue','darkorchid']
     colors.reverse()
 
     num_files = len(infiles)
