@@ -114,6 +114,7 @@ proc wrap_only { {top_index 0} {wrap_sel "protein"} } {
     set n [molinfo $top_index get numframes]
     pbc wrap -molid $top_index -compound fragment -center com -centersel "$wrap_sel" -first 1 -last $n ;# zero-based index
 
+    return $n
 } ;# end of wrap_only
 
 
@@ -123,14 +124,20 @@ proc wrap_and_align {center_sel moltop} {
     # to align around Hv1 backbone.
     # This function can be replaced or edited to align around
     # a different selection.
+    #
+    # Example usage
+    # - wrap_and_align "protein" 0
+    #
     # ============================================================
 
     # wrap but do not align
-    wrap_only $moltop "$center_sel"
+    set num_frames [wrap_only $moltop "$center_sel"]
 
     # align system AFTER wrapping
     puts "Aligning system by Hv1 transmembrane backbone..."
     align_backbone $moltop
+
+    return $num_frames
 
 } ;# end of wrap_and_align
 
@@ -181,7 +188,8 @@ proc calc_rmsd_hv1 {outprefix {level segment} {gbi 0} {inpdb ""} } {
 
     # set groups for RMSD calculation
     puts "Defining groups for RMSD calculation..."
-    lappend rgroup "protein and backbone and {{resid 100 to 125} or {resid 134 to 160} or {resid 168 to 191} or {resid 198 to 220}}"
+    lappend rgroup "hv1_backbone"
+
     # determine groups for level of detail for protein
     if {$level == "residue" || $level == "resid"} {
         for {set resid 88} {$resid < 231} {incr resid} {
@@ -193,6 +201,7 @@ proc calc_rmsd_hv1 {outprefix {level segment} {gbi 0} {inpdb ""} } {
         lappend rgroup "protein and backbone and {{resid 168 to 191}}"
         lappend rgroup "protein and backbone and {{resid 198 to 220}}"
     }
+
     # determine group for ligand if present
     if {$gbi == 1} {
         lappend rgroup "segname GBI1 and noh"
@@ -206,15 +215,18 @@ proc calc_rmsd_hv1 {outprefix {level segment} {gbi 0} {inpdb ""} } {
     puts $outDataFile "# Alignment reference: $inpdb\n"
     puts $outDataFile "# RMSD (Angstroms)"
     set header "# Win | TM bb"
+
     if {$level == "residue" || $level == "resid"} {
         for {set resid 88} {$resid < 231} {incr resid} {
           lappend allres $resid
         }
         set reslabel [join $allres "\t\t"]
         set header "$header | $reslabel"
+
     } elseif {$level == "segment"} {
         set header "$header | S1\t\tS2\t\tS3\t\tS4"
     }
+
     if {$gbi == 1 || $gbi == 2} {
         set header "$header\t\t2GBI"
     }
@@ -308,32 +320,28 @@ proc calc_rmsf_hv1 {outprefix} {
 } ;# end of calc_rmsf_hv1
 
 
-proc count_wat_z { outfile pre_z0 pre_z1 {inpdb ""} } {
+proc count_wat_z { outfile sel_z0 sel_z1 {inpdb ""} } {
     # ============================================================
     # Count number of waters from -z0 to +z1 coordinate.
-    # Specify selection with no spaces, but use commas for multiple words.
-    # See example usage.
     #
     # Arguments
     #  - outfile : string
     #      Name of the output file.
-    #  - pre_z0 : string
-    #      Selection for z0, should be in the lower z plane
-    #  - pre_z1 : string
-    #      Selection for z1, should be in the upper z plane
+    #  - sel_z0 : string
+    #      Text selection for z0, should be in the lower z plane
+    #  - sel_z1 : string
+    #      Text selection for z1, should be in the upper z plane
     #  - inpdb : string
     #      Name of PDB file for reference instead of other loaded PDB for reference.
     #      Default is to use already-loaded PDB as reference.
     # Returns
     #  - (nothing)
     # Example usage
-    #  - count_wat_z waters-in-zrange.dat protein,and,resid,223,and,name,CZ protein,and,resid,208,and,name,CZ
+    #  - count_wat_z waters-in-zrange.dat "protein and resid 223 and name CZ" "protein and resid 208 and name CZ"
     # References
     #  - http://www.ks.uiuc.edu/Research/vmd/mailing_list/vmd-l/23723.html
     # ============================================================
     set watlist [list]
-    set sel_z0 [split $pre_z0 {,}] ;# string selection text
-    set sel_z1 [split $pre_z1 {,}]
     set sel_x0 "protein and resid 173 and name O"
     set sel_x1 "protein and resid 134 and name CA"
     set sel_y0 "protein and resid 124 and name O"
@@ -346,7 +354,7 @@ proc count_wat_z { outfile pre_z0 pre_z1 {inpdb ""} } {
     }
 
     # wrap around given selection, then align around hv1 backbone wrt moltop
-    wrap_and_align "protein" $moltop
+    set n [wrap_and_align "protein" $moltop]
 
     puts "Counting waters..."
 
@@ -417,7 +425,7 @@ proc count_wat_near { outfile dist args } {
     }
 
     # wrap but do not align
-    wrap_only 0 "protein"
+    set num_steps [wrap_only 0 "protein"]
 
     # define output file
     set outDataFile [open $outfile w]
@@ -433,7 +441,6 @@ proc count_wat_near { outfile dist args } {
 
     # waters calculation
     puts "Counting waters..."
-    set num_steps [molinfo 0 get numframes]
     for {set frame 0} {$frame < $num_steps} {incr frame} {
         if {[expr $frame % 100 == 0]} {puts $frame}
         set curr_line "$frame\t"
@@ -495,40 +502,33 @@ proc count_hbonds { seltxt1 seltxt2 {outprefix "hbonds"} } {
 } ;# end of count_hbonds
 
 
-proc calc_dist { outfile pre0 pre1 {pre2 ""} {pre3 ""} } {
+proc calc_dist { outfile sel0 sel1 {sel2 ""} {sel3 ""} } {
     # ============================================================
     # Measure distance of selection 1 to selection[2,3,...].
     #
     # Arguments
     #  - outfile : string
     #      Name of the output file.
-    #  - pre0 : string
-    #      Selection for reference atom
-    #  - pre1 : string
-    #      Selection for atom for which to measure distance to atom0
-    #  - pre2 : string
-    #      Selection for atom for which to measure distance to atom0. Optional.
-    #  - pre3 : string
-    #      Selection for atom for which to measure distance to atom0. Optional.
+    #  - sel0 : string
+    #      Text selection for reference atom
+    #  - sel1 : string
+    #      Text selection for atom for which to measure distance to atom0
+    #  - sel2 : string
+    #      Text selection for atom for which to measure distance to atom0. Optional.
+    #  - sel3 : string
+    #      Text selection for atom for which to measure distance to atom0. Optional.
     # Returns
     #  - (nothing)
     # Example usage
-    #  - calc_dist lip_to_211.dat lipid,and,resid,149,and,name,N protein,and,resid,211,and,name,CA
+    #  - calc_dist lip_to_211.dat "lipid and resid 149 and name N" "protein and resid 211 and name CA"
     # Notes
     #  - If calcDistances to match with colvars traj file, uncomment the first step0 line
     #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
-    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
     # ============================================================
     global inpsf
     global inskip
     global inpdb
     global dcdlist
-
-    # process arguments
-    set sel0 [split $pre0 {,}]
-    set sel1 [split $pre1 {,}]
-    if { $pre2 != "" } {set sel2 [split $pre2 {,}]}
-    if { $pre3 != "" } {set sel3 [split $pre3 {,}]}
 
     # wrap but do not align
     wrap_only 0 "protein"
@@ -568,46 +568,38 @@ proc calc_dist { outfile pre0 pre1 {pre2 ""} {pre3 ""} } {
 } ;# end of calc_dist
 
 
-proc calc_dihed { outfile pre0 pre1 pre2 pre3 } {
+proc calc_dihed { outfile sel0 sel1 sel2 sel3 } {
     # ============================================================
     # Measure dihedral angle of the given four atoms.
     #
     # Arguments
     #  - outfile : string
     #      Name of the output file.
-    #  - pre0 : string
-    #      Selection for atom of dihedral angle
-    #  - pre1 : string
-    #      Selection for atom of dihedral angle
-    #  - pre2 : string
-    #      Selection for atom of dihedral angle
-    #  - pre3 : string
-    #      Selection for atom of dihedral angle
+    #  - sel0 : string
+    #      Text selection for atom of dihedral angle
+    #  - sel1 : string
+    #      Text selection for atom of dihedral angle
+    #  - sel2 : string
+    #      Text selection for atom of dihedral angle
+    #  - sel3 : string
+    #      Text selection for atom of dihedral angle
     # Returns
     #  - (nothing)
     # Example usage
-    #  - calc_dihed gbi1_win02.dat resname,GBI1,and,name,N4 resname,GBI1,and,name,C1 resname,GBI1,and,name,N2 resname,GBI1,and,name,C
+    #  - calc_dihed gbi1_win02.dat "resname GBI1 and name N4" "resname GBI1 and name C1" "resname GBI1 and name N2" "resname GBI1 and name C"
     # Notes
     #  - This proc assumes that the four atoms are on the same molecule, else you may require trajectory align and/or wrap.
     #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
-    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
     # ============================================================
     global inpsf
     global inskip
     global inpdb
     global dcdlist
 
-    # process arguments
-    set sel0 [split $pre0 {,}]
-    set sel1 [split $pre1 {,}]
-    set sel2 [split $pre2 {,}]
-    set sel3 [split $pre3 {,}]
-
-
     # define output file
     set outDataFile [open $outfile w]
     puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
-    puts $outDataFile "# Atom selections: $pre0 $pre1 $pre2 $pre3"
+    puts $outDataFile "# Atom selections: $sel0 $sel1 $sel2 $sel3"
     puts $outDataFile "\n# Frame | Dihedral angle (degrees)"
 
     # set atom selections
@@ -630,28 +622,27 @@ proc calc_dihed { outfile pre0 pre1 pre2 pre3 } {
 } ;# end of calc_dihed
 
 
-proc calc_dens_wat { {presel ""} {outprefix "watdens"} } {
+proc calc_dens_wat { {watsel ""} {outprefix "watdens"} } {
     # ============================================================
     # Calculate volumetric density of water (or other given selection) over trajectory.
     #
     # Arguments
-    #  - presel : string
+    #  - watsel : string
     #      Selection for reference atom
     #  - outprefix : string
     #       Basename of the output files for dx, psf, pdb. Default is "watdens".
     # Returns
     #  - (nothing)
     # Example usage
-    #  - calc_dens_wat name,OH2,and,within,10,of,(protein,and,resid,112,185,211) watdens_nearSel
-    #  - calc_dens_wat name,OH2,and,within,10,of,protein watdens
-    #  - calc_dens_wat name,OH2,and,within,10,of,protein
+    #  - calc_dens_wat "name OH2 and within 10 of (protein and resid 112 185 211)" watdens_nearSel
+    #  - calc_dens_wat "name OH2 and within 10 of protein" watdens
+    #  - calc_dens_wat "name OH2 and within 10 of protein"
     #  - calc_dens_wat
     # Notes
     #  - Only feed this function WRAPPED TRAJECTORIES. Wrapping the traj before calling volmap in this function
     #    doesn't work since the density doesn't align with the simulation (e.g., water slabs are out of range
     #    of the density map). (see sumtraj.tcl script like used for nodes/edges analysis)
     #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
-    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
     # ============================================================
     global inpsf
     global inskip
@@ -660,13 +651,10 @@ proc calc_dens_wat { {presel ""} {outprefix "watdens"} } {
     set moltop 0
 
     # set vmd selection for waters
-    set watsel [split $presel {,}]
-    if {$presel == ""} {
-        set wat [atomselect top "name OH2"]
+    if {$watsel == ""} {
         set watsel "name OH2"
-    } else {
-        set wat [atomselect top "$watsel"]
     }
+    set wat [atomselect top "$watsel"]
 
     # DISCARD the input PDB bc not wrapped (a=0.000000 b=0.000000 c=0.000000); might skew volmap avg
     animate delete beg 0 end 0 skip 0 $moltop
@@ -691,25 +679,24 @@ proc calc_dens_wat { {presel ""} {outprefix "watdens"} } {
 } ;# end of calc_dens_wat
 
 
-proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
+proc calc_sel_orient { seltxt0 seltxt1 {outprefix "selorient"} } {
     # ============================================================
     # Calculate vector direction of some selection relative to bilayer normal direction.
     #
     # Arguments
-    #  - presel0 : string
-    #       VMD selection of the base of the vector
-    #  - presel1 : string
-    #       VMD selection of the end (arrow) of the vector
+    #  - seltxt0 : string
+    #       VMD selection text of the base of the vector
+    #  - seltxt1 : string
+    #       VMD selection text of the end (arrow) of the vector
     #  - outprefix : string
     #       Basename of the output files for dat file. Default is "selorient".
     # Returns
     #  - (nothing)
     # Example usage
-    #  - calc_sel_orient resname,GBI1,and,name,C4 resname,GBI1,and,name,C orient_gbi1
-    #  - calc_sel_orient resname,GBI1,and,name,C4 resname,GBI1,and,name,C
+    #  - calc_sel_orient "resname GBI1 and name C4" "resname GBI1 and name C" orient_gbi1
+    #  - calc_sel_orient "resname GBI1 and name C4" "resname GBI1 and name C"
     # Notes
     #  - If you get error: "measure center: bad weight sum, would cause divide by zero", double check selection language.
-    #  - To specify selection, separate words with commas, not spaces. ex: protein,and,resid,112
     # ============================================================
     global inpsf
     global inskip
@@ -718,20 +705,18 @@ proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
     set moltop 0
 
     # set vmd selection for vector
-    set sel0 [atomselect top "[split $presel0 {,}]"]
-    set sel1 [atomselect top "[split $presel1 {,}]"]
+    set sel0 [atomselect top "$seltxt0"]
+    set sel1 [atomselect top "$seltxt1"]
     set whole [atomselect top all]
-
-    # wrap but do not align
-    wrap_only 0 "resname POPC"
 
     # write trajectory information to output
     set outDataFile [open $outprefix.dat w]
     puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist"
-    puts $outDataFile "# VMD selection tail: $presel0"
-    puts $outDataFile "# VMD selection head: $presel1\n"
+    puts $outDataFile "# VMD selection tail: $seltxt0"
+    puts $outDataFile "# VMD selection head: $seltxt1\n"
 
-    for {set frame 0} {$frame < $n} {incr frame} {
+    set num_steps [molinfo 0 get numframes]
+    for {set frame 0} {$frame < $num_steps} {incr frame} {
         # update selections to this frame number
         $whole frame $frame
         $sel0 frame $frame
@@ -755,27 +740,27 @@ proc calc_sel_orient { presel0 presel1 {outprefix "selorient"} } {
 } ;# end of calc_sel_orient
 
 
-proc get_com_z { presel {outfile "z_com.dat"} } {
+proc get_com_z { seltxt {outfile "z_com.dat"} } {
     # ============================================================
     # For the input selection, get its center of mass Z position.
-    # Specify selection with no spaces, but use commas for multiple words.
-    # See example usage.
+    # Make sure to WRAP TRAJECTORY before use. (not called here
+    # in case of already wrapped trajectory from other analysis)
     #
     # Arguments
     #  - outfile : string
     #      Name of the output file
-    #  - presel : string
+    #  - seltxt : string
     #      VMD selection
     # Returns
     #  - (nothing)
     # Example usage
-    #  - get_com_z resname,HIF z_com_npt01.dat
+    #  - get_com_z "resname HIF" z_com_npt01.dat
     # ============================================================
     global inpsf
     global dcdlist
 
     # set and create vmd selection
-    set comsel [atomselect top [split $presel {,}]]
+    set comsel [atomselect top "$seltxt"]
 
     # optionally, set reference selection
     #set refsel [atomselect top hv1_backbone]
@@ -785,9 +770,6 @@ proc get_com_z { presel {outfile "z_com.dat"} } {
     set outDataFile [open $outfile w]
     puts $outDataFile "# Data from files:\n#  $inpsf\n#  $dcdlist\n"
     puts $outDataFile "# Frame | COM Z position (Angstroms)"
-
-    # wrap around given selection, then align around hv1 backbone wrt moltop
-    wrap_and_align "protein" 0
 
     # loop over frames
     set num_steps [molinfo 0 get numframes]
