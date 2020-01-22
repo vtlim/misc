@@ -81,6 +81,7 @@ def plot_bar_group(plt, xlist, ylist, elist, horiz=False):
     """
     #colors = ['purple','lightseagreen']
     legends = ['ZPVE-CCSD(T)/CBS limit','CCSD(T)/CBS limit','MP2/CBS limit','B3LYP-D3/cc-pVTZ','TPSSh-D3BJ/def2-TZVP','COSMO-B3LYP-D3/cc-pVTZ','COSMO-B3LYP-D3/cc-pVTZ']
+    legends = ['2GBI taut1', '2GBI taut2', 'expt']
 
 
     refx = -5000  # some start int for ref group
@@ -200,11 +201,14 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
 
 #    plt.ylim(0, 7)
 
-    # ===== CUSTOM THRESHOLD LINE ===== #
+    # ===== CUSTOM LINE ===== #
     # include this threshold value as comment in input file for your record
     #plt.axhline(y=3.049, c='b', lw=2.0,ls='--',label='arg reference')
     #plt.axhline(y=5.012,c='r',lw=2.0,ls=':', label='ser reference')
-    plt.legend(loc=1,fontsize=8)
+
+    # ===== LEGEND OPTIONS ===== #
+    plt.legend(loc=2,fontsize=8)
+    #plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8)
 
     # ====== TICK LABEL OPTIONS ======= #
     if horiz:
@@ -236,6 +240,9 @@ def finalize_and_save(plt, xlist, ylist, llist, figname, horiz):
 
 
     # ===== FINALIZE AND SAVE ========= #
+#    plt.title('taut1')
+#    plt.ylim(0, 9.2)
+
     plt.savefig(figname,bbox_inches='tight')
     plt.show()
 
@@ -253,12 +260,12 @@ if __name__ == "__main__":
              "Optional: plot labels in 3rd column, stdev in 4th column.")
 
     # plot labeling
+    parser.add_argument("-o", "--output",
+        help="Name of the output figure.", default='barplot.png')
     parser.add_argument("-x", "--xlabel",default="",
         help="Label for x data. Use single quotes if passing in Latex.")
     parser.add_argument("-y", "--ylabel",default="",
         help="Label for y data. Use single quotes if passing in Latex.")
-    parser.add_argument("-o", "--output",
-        help="Name of the output figure.", default='barplot.png')
 
     # plot type
     parser.add_argument("--group",action="store_true",default=False,
