@@ -482,6 +482,7 @@ proc count_hbonds { seltxt1 seltxt2 {outprefix "hbonds"} } {
     global inskip
     global inpdb
     global dcdlist
+    puts "Counting hydrogen bonds..."
 
     # define atom selections
     set sel1 [atomselect top "$seltxt1"]
@@ -529,6 +530,7 @@ proc calc_dist { outfile sel0 sel1 {sel2 ""} {sel3 ""} } {
     global inskip
     global inpdb
     global dcdlist
+    puts "Calculating distances..."
 
     # wrap but do not align
     wrap_only 0 "protein"
@@ -595,6 +597,7 @@ proc calc_dihed { outfile sel0 sel1 sel2 sel3 } {
     global inskip
     global inpdb
     global dcdlist
+    puts "Calculating dihedral angle..."
 
     # define output file
     set outDataFile [open $outfile w]
@@ -758,6 +761,7 @@ proc get_com_z { seltxt {outfile "z_com.dat"} } {
     # ============================================================
     global inpsf
     global dcdlist
+    puts "Calculating center of mass z-coordinate..."
 
     # set and create vmd selection
     set comsel [atomselect top "$seltxt"]
