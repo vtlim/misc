@@ -27,7 +27,6 @@ TODO:
 
 """
 
-import os
 import sys
 import numpy as np
 from functools import reduce
@@ -46,6 +45,7 @@ def find_num_cols(y_mat):
             num_cols = len(y_mat)
         else:
             num_cols = 1
+
     # 1D np array
     elif type(y_mat) is np.ndarray:
         if len(y_mat.shape) == 2:
@@ -89,20 +89,24 @@ def subsample(x, y_mat, num_cols=None):
         num_cols = find_num_cols(y_mat)
 
     for i in range(num_cols):
+
         # list of np arrays
         if type(y_mat) is list and len(y_mat[0]) > 1:
             y = y_mat[i]
+
         # 1D np array
         elif type(y_mat) is np.ndarray and len(y_mat.shape) == 1:
             y = y_mat
+
         # multidimensional np array
         else:
             y = y_mat[:,i]
 
-        # Compute correlation times.
+        # compute correlation times
         g = timeseries.statisticalInefficiency(y)
         indices = timeseries.subsampleCorrelatedData(y, g)
-        # Subsample data.
+
+        # subsample data
         y_sub = y[indices]
         x_sub = x[indices]
         z_mat.append(y_sub)
@@ -110,6 +114,7 @@ def subsample(x, y_mat, num_cols=None):
 
         print("\nLength of original timeseries data: %d\nLength of subsampled\
  timeseries data: %d" % (len(y), len(y_sub)) )
+
     return x_mat, z_mat
 
 
@@ -145,12 +150,15 @@ def moving_average(y_mat, N, num_cols=None):
         num_cols = find_num_cols(y_mat)
 
     for i in range(num_cols):
+
         # list of np arrays
         if type(y_mat) is list and len(y_mat[0]) > 1:
             y = y_mat[i]
+
         # 1D np array
         elif type(y_mat) is np.ndarray and len(y_mat.shape) == 1:
             y = y_mat
+
         # multidimensional np array
         else:
             y = y_mat[:,i]
@@ -159,8 +167,11 @@ def moving_average(y_mat, N, num_cols=None):
         y_mean = np.convolve(y, np.ones((N,))/N,mode='valid')
         z_mat.append(y_mean)
 
-    if num_cols == 1: z_mat = z_mat[0]
+    if num_cols == 1:
+        z_mat = z_mat[0]
+
     return z_mat
+
 
 def factorize(n):
     """
@@ -172,7 +183,8 @@ def factorize(n):
     return sorted(set(reduce(list.__add__,
            ([i, n//i] for i in range(1, int(pow(n, 0.5) + 1)) if n % i == 0))))
 
-def formatFig(ax1, plt, fig, **kwargs):
+
+def format_fig(ax1, plt, fig, **kwargs):
     """
     """
     # plot limits
@@ -253,31 +265,40 @@ def xyPlot(**kwargs):
         y_mat = data[:,1:]
         if uncertf is not None:
             uncerts = uncerts[:,1:]
-    num_cols = y_mat.shape[1] # how many columns in orig data set
-    if num_cols == 1: y_mat = y_mat.flatten()
+
+    # get number of columns in orig data set
+    num_cols = y_mat.shape[1]
+    if num_cols == 1:
+        y_mat = y_mat.flatten()
 
     ### If data is broken up for subplots, only works for single column data.
     if num_groups != 0:
+
         if num_cols != 1:
             sys.exit("ERROR: This script is not equipped to break input "
                      "data into groups with multiple data columns.")
+
         if opt['legend'] is not None:
             print("WARNING: Input legend will be discarded. Grouped data will "
                   "instead be labeled by group count.")
+
         y_mat = np.array_split(y_mat, num_groups) # LIST of subarrays, may not be equally split
         num_cols = len(y_mat) # actually is number of groups split up from the 1 column
+
     print("How many data series to plot: {}".format(num_cols))
 
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample:
         x_mat, y_mat = subsample(x,y_mat,num_cols)
+
     elif 'doMean' in locals(): # if False, doMean variable does not exist
         y_mat = moving_average(y_mat,mean_period,num_cols)
+
         # x may not directly match with y bc of moving average
         try:
-            x = 0.002*np.asarray(range(len(y_mat[0])),dtype=np.float32)
+            x = 0.002*np.asarray(range(len(y_mat[0])), dtype=np.float32)
         except TypeError:
-            x = 0.002*np.asarray(range(len(y_mat)),dtype=np.float32)
+            x = 0.002*np.asarray(range(len(y_mat)), dtype=np.float32)
 
 
     ### Define cmap color map.
@@ -296,7 +317,6 @@ def xyPlot(**kwargs):
 
         # color map
         colors = mpl.cm.tab10(np.linspace(0, 1, 10))
-        #colors = mpl.cm.tab10(np.linspace(0, 1, lines_per_plot))
         #colors = mpl.cm.bwr(np.linspace(0, 1, lines_per_plot))
 
     ### Initialize figure.
@@ -315,24 +335,31 @@ def xyPlot(**kwargs):
             y = y_mat[i]
             x = np.arange(len(y))
             c = colors[i % lines_per_plot]
+
             if (num_plots != 0) and (i > 0) and (i % lines_per_plot == 0):
                 idx += 1
+
                 # format the current subplot then get next legend ready
-                formatFig(curr_ax, plt, fig, **opt)
+                format_fig(curr_ax, plt, fig, **opt)
                 opt['legend'] = ';'.join(str(i) for i in range(i+1, i+1+lines_per_plot))
+
                 # change to next subplot
                 print("Switching to new subplot...")
                 curr_ax = axs[idx]
+
         elif num_cols == 1:
             y = y_mat
             c = colors[i]
+
         elif doSubsample:
             y = y_mat[i]
             x = x_mat[i]
             c = colors[i]
+
         elif 'doMean' in locals():
             y = y_mat[i]
             c = colors[i]
+
         else:
             y = y_mat[:,i]
             c = colors[i]
@@ -340,6 +367,7 @@ def xyPlot(**kwargs):
         ### Plot the data.
         plot_args = {'color':c, 'lw':1.5}
         print(i, len(x), y.shape)
+
         if uncertf is not None:
             curr_ax.errorbar(x, y, yerr=uncerts[:,i], capsize=1.5, **plot_args)
         else:
@@ -354,11 +382,11 @@ def xyPlot(**kwargs):
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
 
-    formatFig(curr_ax, plt, fig, **opt)
+    format_fig(curr_ax, plt, fig, **opt)
 
     ### Save figure.
     if opt['publish']:
-        plt.savefig(opt['output'], bbox_inches='tight',dpi=300)
+        plt.savefig(opt['output'], bbox_inches='tight', dpi=300)
     else:
         plt.savefig(opt['output'], bbox_inches='tight')
     plt.show()
@@ -372,10 +400,10 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input",
                         help="Name of the input file. First line is assumed "
                         "to be some heading line and is NOT read in.")
-    parser.add_argument("-u", "--uncert",default=None,
+    parser.add_argument("-u", "--uncert", default=None,
                         help="Name of the file with corresponding uncertainties"
                         + ". Not compatible with moving averages or subsampling.")
-    parser.add_argument("-c", "--columns",default=None,
+    parser.add_argument("-c", "--columns", default=None,
                         help="Specify particular data columns to plot. Separate"
                         " values with semicolon and place in quotes (bc bash). "
                         "Ex. \"2;3;4\". The 0th column is x, so don't specify "
@@ -394,11 +422,11 @@ if __name__ == "__main__":
                         help="Subsample y data based on correlation times.")
 
     # PLOT LABELING AND FORMATTING
-    parser.add_argument("-x", "--xlabel",default="",
+    parser.add_argument("-x", "--xlabel", default="",
                         help="Label for x data.")
-    parser.add_argument("-y", "--ylabel",default="",
+    parser.add_argument("-y", "--ylabel", default="",
                         help="Label for y data.")
-    parser.add_argument("-t", "--title",default="",
+    parser.add_argument("-t", "--title", default="",
                         help="Label for plot title.")
     parser.add_argument("-l", "--legend", default=None, type=str,
                         help="Add legend to data. Format input as "
