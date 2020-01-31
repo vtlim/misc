@@ -176,8 +176,8 @@ def formatFig(ax1, plt, fig, **kwargs):
     """
     """
     # plot limits
-    #axes.set_xlim([min(x)-2,max(x)+2])
-    #ax1.set_ylim([0, 20])
+    #ax1.set_xlim([min(x)-2,max(x)+2])
+    ax1.set_ylim([3, 8])
 
     # custom text on plot
     #ax1.text(2,11,"A",fontsize=10)
@@ -346,15 +346,10 @@ def xyPlot(**kwargs):
             curr_ax.plot(x, y, **plot_args)
 
             # add points with the line plot
-            curr_ax.scatter(x, y, **plot_args, s=2)
+            #curr_ax.scatter(x, y, **plot_args, s=2)
 
     ### Format figure.
     axes = plt.gca()
-#    axes.set_xlim([min(x)-2,max(x)+2])
-#    axes.set_ylim([-0.1,3])
-    axes.set_ylim([0, 20])
-
-#    ax1.text(2,11,"A",fontsize=10) # custom text on plot
 
     if num_groups != 0:
         plt.subplots_adjust(wspace=0.)
