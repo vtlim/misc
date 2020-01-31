@@ -112,8 +112,8 @@ def subsample(x, y_mat, num_cols=None):
         z_mat.append(y_sub)
         x_mat.append(x_sub)
 
-        print("\nLength of original timeseries data: %d\nLength of subsampled\
- timeseries data: %d" % (len(y), len(y_sub)) )
+        print("\nLength of original timeseries data: %d" % len(y) )
+        print("\nLength of subsampled timeseries data: %d" % len(y_sub) )
 
     return x_mat, z_mat
 
@@ -220,9 +220,9 @@ def format_fig(ax1, plt, fig, **kwargs):
             leg = ax1.legend(leglabel,loc='upper left')
 
     ### Label the figure.
-    ax1.set_title(opt['title'],fontsize=tSize)
-    ax1.set_xlabel(opt['xlabel'],fontsize=xSize)
-    ax1.set_ylabel(opt['ylabel'],fontsize=ySize)
+    ax1.set_title(opt['title'],   fontsize=tSize)
+    ax1.set_xlabel(opt['xlabel'], fontsize=xSize)
+    ax1.set_ylabel(opt['ylabel'], fontsize=ySize)
     for xtick in ax1.get_xticklabels():
         xtick.set_fontsize(kSize)
     for ytick in ax1.get_yticklabels():
@@ -233,6 +233,9 @@ def format_fig(ax1, plt, fig, **kwargs):
 def xyPlot(**kwargs):
     """
     """
+    # ================================================
+    # INPUT STAGE
+    # ================================================
 
     ### Assign input arguments.
     filename = opt['input']
@@ -287,19 +290,29 @@ def xyPlot(**kwargs):
 
     print("How many data series to plot: {}".format(num_cols))
 
+    # ================================================
+    # PROCESSING STAGE
+    # ================================================
+
     ### subsample data (may not want to if not timeseries data!)
     if doSubsample:
-        x_mat, y_mat = subsample(x,y_mat,num_cols)
+        x_mat, y_mat = subsample(x, y_mat, num_cols)
 
     elif 'doMean' in locals(): # if False, doMean variable does not exist
         y_mat = moving_average(y_mat,mean_period,num_cols)
 
-        # x may not directly match with y bc of moving average
+        # since x and y are not 1:1 due to computing moving average,
+        # regenerate x data based on scaling factor, e.g., to convert
+        # frame number to ns.
+        scale_x = 0.02
         try:
-            x = 0.002*np.asarray(range(len(y_mat[0])), dtype=np.float32)
+            x = scale_x * np.asarray(range(len(y_mat[0])), dtype=np.float32)
         except TypeError:
-            x = 0.002*np.asarray(range(len(y_mat)), dtype=np.float32)
+            x = scale_x * np.asarray(range(len(y_mat)), dtype=np.float32)
 
+    # ================================================
+    # PLOTTING STAGE
+    # ================================================
 
     ### Define cmap color map.
     #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
