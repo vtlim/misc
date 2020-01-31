@@ -189,7 +189,7 @@ def format_fig(ax1, plt, fig, **kwargs):
     """
     # plot limits
     #ax1.set_xlim([min(x)-2,max(x)+2])
-    ax1.set_ylim([3, 8])
+    #ax1.set_ylim([3, 8])
 
     # custom text on plot
     #ax1.text(2,11,"A",fontsize=10)
@@ -209,7 +209,8 @@ def format_fig(ax1, plt, fig, **kwargs):
         kSize = 8
         fig.set_size_inches(3.37,1.7)
         if 'legend' in locals():
-            leg = ax1.legend(leglabel,loc='upper center',fontsize=8,bbox_to_anchor=(0.50,1.30),ncol=2)
+            leg = ax1.legend(leglabel, loc='upper center', fontsize=8,
+                bbox_to_anchor=(0.50,1.40), ncol=2)
     else:
         tSize = 20
         xSize = 18
@@ -217,7 +218,7 @@ def format_fig(ax1, plt, fig, **kwargs):
         kSize = 16
         #fig.set_size_inches(11, 8.5)
         if 'legend' in locals():
-            leg = ax1.legend(leglabel,loc='upper left')
+            leg = ax1.legend(leglabel, loc='upper left')
 
     ### Label the figure.
     ax1.set_title(opt['title'],   fontsize=tSize)
@@ -317,6 +318,7 @@ def xyPlot(**kwargs):
     ### Define cmap color map.
     #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
     colors = mpl.cm.tab20(np.linspace(0, 1, 10))
+    colors = mpl.cm.Dark2(np.linspace(0, 1, 8))
 
     num_plots = 1
     if num_groups != 0:
@@ -378,7 +380,7 @@ def xyPlot(**kwargs):
             c = colors[i]
 
         ### Plot the data.
-        plot_args = {'color':c, 'lw':1.5}
+        plot_args = {'color':c, 'lw':0.8, 'alpha':0.8}
         print(i, len(x), y.shape)
 
         if uncertf is not None:
