@@ -540,10 +540,10 @@ proc calc_dist { outfile sel0 sel1 {sel2 ""} {sel3 ""} } {
     puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
     puts $outDataFile "# Selection 0: $sel0\n# Selection 1: $sel1"
 
-    if {[info exists sel2]} {
+    if { $sel2 ne "" } {
       puts $outDataFile "# Selection 2: $sel2"
     }
-    if {[info exists sel3]} {
+    if { $sel3 ne "" } {
       puts $outDataFile "# Selection 3: $sel3"
     }
     puts $outDataFile "\n# Frame | Distance from sel0 to all other selections (Angstrom)"
@@ -551,18 +551,18 @@ proc calc_dist { outfile sel0 sel1 {sel2 ""} {sel3 ""} } {
     # set atom selections
     set atom1 [[atomselect top "$sel0"] get index]
     set atom2 [[atomselect top "$sel1"] get index]
-    if {[info exists sel2]} {set atom3 [[atomselect top "$sel2"] get index]}
-    if {[info exists sel3]} {set atom4 [[atomselect top "$sel3"] get index]}
+    if { $sel2 ne "" } {set atom3 [[atomselect top "$sel2"] get index]}
+    if { $sel3 ne "" } {set atom4 [[atomselect top "$sel3"] get index]}
 
     # take measurements
     set dist1 [measure bond [list $atom1 $atom2] frame all]
-    if {[info exists sel2]} {set dist2 [measure bond [list $atom1 $atom3] frame all]}
-    if {[info exists sel3]} {set dist3 [measure bond [list $atom1 $atom4] frame all]}
+    if { $sel2 ne "" } {set dist2 [measure bond [list $atom1 $atom3] frame all]}
+    if { $sel3 ne "" } {set dist3 [measure bond [list $atom1 $atom4] frame all]}
 
     # write output
     for {set i 0} {$i < [llength $dist1]} {incr i} {
-        if {[info exists dist3]} { puts $outDataFile "$i\t[lindex $dist1 $i]\t[lindex $dist2 $i]\t[lindex $dist3 $i]" } \
-        elseif {[info exists dist2]} { puts $outDataFile "$i\t[lindex $dist1 $i]\t[lindex $dist2 $i]" } \
+        if { $sel3 ne "" } { puts $outDataFile "$i\t[lindex $dist1 $i]\t[lindex $dist2 $i]\t[lindex $dist3 $i]" } \
+        elseif { $sel2 ne "" } { puts $outDataFile "$i\t[lindex $dist1 $i]\t[lindex $dist2 $i]" } \
         else { puts $outDataFile "$i\t[lindex $dist1 $i]" }
     }
     close $outDataFile
