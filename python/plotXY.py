@@ -418,8 +418,7 @@ if __name__ == "__main__":
 
     # DATA INPUT
     parser.add_argument("-i", "--input",
-                        help="Name of the input file. First line is assumed "
-                        "to be some heading line and is NOT read in.")
+                        help="Name of the input file.")
     parser.add_argument("-u", "--uncert", default=None,
                         help="Name of the file with corresponding uncertainties"
                         + ". Not compatible with moving averages or subsampling.")
