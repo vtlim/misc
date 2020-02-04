@@ -194,6 +194,11 @@ def format_fig(ax1, plt, fig, **kwargs):
     # custom text on plot
     #ax1.text(2,11,"A",fontsize=10)
 
+    # shade custom regions
+    ax1.axvspan(217, 222, facecolor='lightgrey', alpha=0.25)
+    ax1.axvspan(246, 254, facecolor='lightgrey', alpha=0.25)
+    ax1.axvspan(282, 286, facecolor='lightgrey', alpha=0.25)
+
     plt.grid()
     #plt.grid(which='minor', alpha=0.2)
     #plt.minorticks_on()
@@ -216,9 +221,9 @@ def format_fig(ax1, plt, fig, **kwargs):
         xSize = 18
         ySize = 18
         kSize = 16
-        #fig.set_size_inches(11, 8.5)
+        fig.set_size_inches(30, 10)
         if 'legend' in locals():
-            leg = ax1.legend(leglabel, loc='upper left')
+            leg = ax1.legend(leglabel, loc='upper right')
 
     ### Label the figure.
     ax1.set_title(opt['title'],   fontsize=tSize)
@@ -318,7 +323,7 @@ def xyPlot(**kwargs):
     ### Define cmap color map.
     #colors = mpl.cm.tab20(np.linspace(0, 1, num_cols))
     colors = mpl.cm.tab20(np.linspace(0, 1, 10))
-    colors = mpl.cm.Dark2(np.linspace(0, 1, 8))
+    #colors = mpl.cm.Dark2(np.linspace(0, 1, 8))
 
     num_plots = 1
     if num_groups != 0:
@@ -380,7 +385,7 @@ def xyPlot(**kwargs):
             c = colors[i]
 
         ### Plot the data.
-        plot_args = {'color':c, 'lw':0.8, 'alpha':0.8}
+        plot_args = {'color':c, 'lw':1.0, 'alpha':0.8}
         print(i, len(x), y.shape)
 
         if uncertf is not None:
