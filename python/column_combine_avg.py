@@ -33,7 +33,7 @@ def combine_and_avg(infiles, outfile):
 
     # save output
     np.savetxt(outfile, full, fmt='%1.3f', delimiter='\t',
-        header="# Columns in order of x, y1, y2, ..., avg(y)")
+        header="Columns in order of x, y1, y2, ..., avg(y)")
 
 
 
