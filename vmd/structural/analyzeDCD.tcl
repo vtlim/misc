@@ -320,32 +320,44 @@ proc calc_rmsf_hv1 {outprefix} {
 } ;# end of calc_rmsf_hv1
 
 
-proc count_wat_z { outfile sel_z0 sel_z1 {inpdb ""} } {
+proc count_wat_z { outfile x0 x1 y0 y1 z0 z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
     # ============================================================
-    # Count number of waters from -z0 to +z1 coordinate.
+    # Count number of waters within a rectangular box with given dimensions.
     #
     # Arguments
     #  - outfile : string
     #      Name of the output file.
-    #  - sel_z0 : string
-    #      Text selection for z0, should be in the lower z plane
-    #  - sel_z1 : string
-    #      Text selection for z1, should be in the upper z plane
+    #  - x0 : float
+    #      Lower X coordinate of the box.
+    #  - x1 : float
+    #      Upper X coordinate of the box.
+    #  - y0 : float
+    #      Lower Y coordinate of the box.
+    #  - y1 : float
+    #      Upper Y coordinate of the box.
+    #  - z0 : float
+    #      Lower Z coordinate of the box.
+    #  - z1 : float
+    #      Upper Z coordinate of the box.
+    #  - ligsel : string
+    #      Name of the ligand selection for which to further limit water count.
+    #  - ligdist : float
+    #      Distance from ligand within which to count waters.
     #  - inpdb : string
     #      Name of PDB file for reference instead of other loaded PDB for reference.
     #      Default is to use already-loaded PDB as reference.
     # Returns
     #  - (nothing)
     # Example usage
-    #  - count_wat_z waters-in-zrange.dat "protein and resid 223 and name CZ" "protein and resid 208 and name CZ"
+    #  - count_wat_z waters-in-zrange.dat -12 16 -17 7 -15 20
+    #  - count_wat_z waters-in-zrange.dat -12 16 -17 7 -15 20 "resname GBI2" 18
     # References
     #  - http://www.ks.uiuc.edu/Research/vmd/mailing_list/vmd-l/23723.html
     # ============================================================
+    global inpsf
+    global inskip
+    global dcdlist
     set watlist [list]
-    set sel_x0 "protein and resid 173 and name O"
-    set sel_x1 "protein and resid 134 and name CA"
-    set sel_y0 "protein and resid 124 and name O"
-    set sel_y1 "protein and resid 148 and name C"
 
     set moltop 0
     if {$inpdb != ""} {
@@ -359,23 +371,20 @@ proc count_wat_z { outfile sel_z0 sel_z1 {inpdb ""} } {
     puts "Counting waters..."
 
     # define output file
-    set outDataFile [open $outfile w]
-    puts $outDataFile "# Frame | number of waters bt Z crds of two sels"
+    set outDataFile [open $outfile a]
+    puts $outDataFile "# Input PSF: $inpsf\n# Input DCD, skip $inskip: $dcdlist\n"
+    puts $outDataFile "# Edges, x: $x0 $x1\n# Edges, y: $y0 $y1\n# Edges, z: $z0 $z1"
+    if {$ligsel != ""} {puts $outDataFile "# Ligand selection: $ligsel (within $ligdist A)\n"}
+    puts $outDataFile "# Frame | number of water molecules"
 
-    # get reference Z coordinates
-    set z0 [[atomselect $moltop $sel_z0 frame 0] get {z}]
-    set z1 [[atomselect $moltop $sel_z1 frame 0] get {z}]
-    puts $outDataFile "# Selection 1 (z=$z0): $sel_z0\n# Selection 2 (z=$z1): $sel_z1"
-
-    # get box edges
-    set x0 [[atomselect $moltop $sel_x0 frame 0] get {x}]
-    set x1 [[atomselect $moltop $sel_x1 frame 0] get {x}]
-    set y0 [[atomselect $moltop $sel_y0 frame 0] get {y}]
-    set y1 [[atomselect $moltop $sel_y1 frame 0] get {y}]
-    puts $outDataFile "# Edge 1 (x=$x0): $sel_x0\n# Edge 2 (x=$x1): $sel_x1\n# Edge 3 (y=$y0): $sel_y0\n# Edge 4 (y=$y1): $sel_y1"
+    # set water selection
+    if {$ligsel != ""} {
+      set wats [atomselect 0 "noh and waters and (z<$z1 and z>$z0) and (x<$x1 and x>$x0) and (y<$y1 and y>$y0) and within $ligdist of $ligsel"]
+    } else {
+      set wats [atomselect 0 "noh and waters and (z<$z1 and z>$z0) and (x<$x1 and x>$x0) and (y<$y1 and y>$y0)"]
+    }
 
     # loop over frames
-    set wats [atomselect 0 "noh and waters and (z<$z1 and z>$z0) and (x<$x1 and x>$x0) and (y<$y1 and y>$y0)"]
     for {set i 0} {$i < $n} {incr i} {
         $wats frame $i
         $wats update
@@ -389,6 +398,62 @@ proc count_wat_z { outfile sel_z0 sel_z1 {inpdb ""} } {
     close $outDataFile
 
 } ;# end of count_wat_z
+
+
+proc count_wat_z_sel { outfile sel_x0 sel_x1 sel_y0 sel_y1 sel_z0 sel_z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
+    # ============================================================
+    # Count number of waters based on the dimensions of the given selections.
+    # This function calls count_wat_z.
+    #
+    # Arguments
+    #  - outfile : string
+    #      Name of the output file.
+    #  - sel_z0 : string
+    #      Text selection for z0, should be in the lower z plane
+    #  - sel_z1 : string
+    #      Text selection for z1, should be in the upper z plane
+    #  - ligsel : string
+    #      Name of the ligand selection for which to further limit water count.
+    #  - ligdist : float
+    #      Distance from ligand within which to count waters.
+    #  - inpdb : string
+    #      Name of PDB file for reference instead of other loaded PDB for reference.
+    #      Default is to use already-loaded PDB as reference.
+    # Returns
+    #  - (nothing)
+    # Example usage
+    #  - count_wat_z_sel waters-in-zrange.dat "protein and resid 173 and name O" "protein and resid 134 and name CA"
+    #       "protein and resid 124 and name O" "protein and resid 148 and name C"
+    #       "protein and resid 223 and name CZ" "protein and resid 208 and name CZ"
+    # References
+    #  - http://www.ks.uiuc.edu/Research/vmd/mailing_list/vmd-l/23723.html
+    # ============================================================
+    #set sel_x0 "protein and resid 173 and name O"
+    #set sel_x1 "protein and resid 134 and name CA"
+    #set sel_y0 "protein and resid 124 and name O"
+    #set sel_y1 "protein and resid 148 and name C"
+
+    set moltop 0
+    if {$inpdb != ""} {
+        mol new $inpdb
+        set moltop 1
+    }
+
+    # get box edges
+    set x0 [[atomselect $moltop $sel_x0 frame 0] get {x}]
+    set x1 [[atomselect $moltop $sel_x1 frame 0] get {x}]
+    set y0 [[atomselect $moltop $sel_y0 frame 0] get {y}]
+    set y1 [[atomselect $moltop $sel_y1 frame 0] get {y}]
+    set z0 [[atomselect $moltop $sel_z0 frame 0] get {z}]
+    set z1 [[atomselect $moltop $sel_z1 frame 0] get {z}]
+
+    set outDataFile [open $outfile w]
+    puts $outDataFile "# Atom selections:\n# x0: $sel_x0\n# x1: $sel_x1\n# y0: $sel_y0\n# y1: $sel_y1\n# z0: $sel_z0\n# z1: $sel_z1\n"
+    close $outDataFile
+
+    count_wat_z $outfile $x0 $x1 $y0 $y1 $z0 $z1 $ligsel $ligdist $inpdb
+
+} ;# end of count_wat_z_sel
 
 
 proc count_wat_near { outfile dist args } {
@@ -767,8 +832,8 @@ proc get_com_z { seltxt {outfile "z_com.dat"} } {
     set comsel [atomselect top "$seltxt"]
 
     # optionally, set reference selection
-    #set refsel [atomselect top hv1_backbone]
-    set refsel [atomselect top "name C21 C31"]
+    set refsel [atomselect top hv1_backbone]
+    #set refsel [atomselect top "name C21 C31"]
 
     # open file for writing output
     set outDataFile [open $outfile w]
