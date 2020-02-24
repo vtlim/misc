@@ -84,7 +84,7 @@ proc align_backbone { {refmolid 0} } {
     # Align Hv1 protein by backbone of transmembrane regions.
     # All frames with molid of 0 will be aligned. The reference
     # can either be frame 0 of molid 0, or a different molid.
-    # Used in functions: calc_rmsd_hv1, calc_rmsf_hv1, count_wat_z
+    # Used in functions: calc_rmsd_hv1, calc_rmsf_hv1, count_wat_box
     #
     # Arguments
     #  - refmolid : int
@@ -320,7 +320,7 @@ proc calc_rmsf_hv1 {outprefix} {
 } ;# end of calc_rmsf_hv1
 
 
-proc count_wat_z { outfile x0 x1 y0 y1 z0 z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
+proc count_wat_box { outfile x0 x1 y0 y1 z0 z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
     # ============================================================
     # Count number of waters within a rectangular box with given dimensions.
     #
@@ -349,8 +349,8 @@ proc count_wat_z { outfile x0 x1 y0 y1 z0 z1 {ligsel ""} {ligdist 15} {inpdb ""}
     # Returns
     #  - (nothing)
     # Example usage
-    #  - count_wat_z waters-in-zrange.dat -12 16 -17 7 -15 20
-    #  - count_wat_z waters-in-zrange.dat -12 16 -17 7 -15 20 "resname GBI2" 18
+    #  - count_wat_box waters-in-zrange.dat -12 16 -17 7 -15 20
+    #  - count_wat_box waters-in-zrange.dat -12 16 -17 7 -15 20 "resname GBI2" 18
     # References
     #  - http://www.ks.uiuc.edu/Research/vmd/mailing_list/vmd-l/23723.html
     # ============================================================
@@ -397,13 +397,13 @@ proc count_wat_z { outfile x0 x1 y0 y1 z0 z1 {ligsel ""} {ligdist 15} {inpdb ""}
     puts $outDataFile "# --- Average over traj: [average $watlist]"
     close $outDataFile
 
-} ;# end of count_wat_z
+} ;# end of count_wat_box
 
 
-proc count_wat_z_sel { outfile sel_x0 sel_x1 sel_y0 sel_y1 sel_z0 sel_z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
+proc count_wat_box_sel { outfile sel_x0 sel_x1 sel_y0 sel_y1 sel_z0 sel_z1 {ligsel ""} {ligdist 15} {inpdb ""} } {
     # ============================================================
     # Count number of waters based on the dimensions of the given selections.
-    # This function calls count_wat_z.
+    # This function calls count_wat_box.
     #
     # Arguments
     #  - outfile : string
@@ -422,7 +422,7 @@ proc count_wat_z_sel { outfile sel_x0 sel_x1 sel_y0 sel_y1 sel_z0 sel_z1 {ligsel
     # Returns
     #  - (nothing)
     # Example usage
-    #  - count_wat_z_sel waters-in-zrange.dat "protein and resid 173 and name O" "protein and resid 134 and name CA"
+    #  - count_wat_box_sel waters-in-zrange.dat "protein and resid 173 and name O" "protein and resid 134 and name CA"
     #       "protein and resid 124 and name O" "protein and resid 148 and name C"
     #       "protein and resid 223 and name CZ" "protein and resid 208 and name CZ"
     # References
@@ -451,9 +451,9 @@ proc count_wat_z_sel { outfile sel_x0 sel_x1 sel_y0 sel_y1 sel_z0 sel_z1 {ligsel
     puts $outDataFile "# Atom selections:\n# x0: $sel_x0\n# x1: $sel_x1\n# y0: $sel_y0\n# y1: $sel_y1\n# z0: $sel_z0\n# z1: $sel_z1\n"
     close $outDataFile
 
-    count_wat_z $outfile $x0 $x1 $y0 $y1 $z0 $z1 $ligsel $ligdist $inpdb
+    count_wat_box $outfile $x0 $x1 $y0 $y1 $z0 $z1 $ligsel $ligdist $inpdb
 
-} ;# end of count_wat_z_sel
+} ;# end of count_wat_box_sel
 
 
 proc count_wat_near { outfile dist args } {
