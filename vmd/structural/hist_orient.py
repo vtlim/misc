@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+"""
+
+Histograms are normalized such that the sum of all bars is equal to one.
+See more details: https://stackoverflow.com/a/16399202
+
+"""
+
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,7 +24,7 @@ def plot_hists(infiles, same_ax=False):
         colors.reverse()
 
         # set figure size
-        fig, axs = plt.subplots(num_files, 1, sharex=True, tight_layout=True, figsize=(5,8))
+        fig, axs = plt.subplots(num_files, 1, sharex=True, tight_layout=True, figsize=(2,8))
 
         for i, d in enumerate(alldata):
             # if there's only one file, can't call axs[i] so put in list
@@ -25,8 +32,10 @@ def plot_hists(infiles, same_ax=False):
                 axs[i]
             except TypeError:
                 axs = [axs]
-            axs[i].hist(d, range=[-1,1], bins=100, color=colors[i])
+            axs[i].hist(d, range=[-1,1], bins=100, color=colors[i],
+                weights=(np.ones_like(d) / len(d)))
             axs[i].axvline(x=0, color='silver', linestyle='--')
+            axs[i].set_ylim(0, 0.15)
 
     else:
         for i, d in enumerate(alldata):
@@ -36,11 +45,9 @@ def plot_hists(infiles, same_ax=False):
             # set figure size
             plt.gcf().set_size_inches(2, 6)
 
-            # normalize so that sum of all bars = 1
-            # https://stackoverflow.com/a/16399202
-            plt.hist(d, range=[-1,1], bins=100, color=colors[i],
-                weights=np.ones_like(d)/float(len(d)),
-                label=os.path.splitext(infiles[i]), alpha=0.7,
+            # plot normalized histogram
+            plt.hist(d, range=[-1,1], bins=100, weights=(np.ones_like(d) / len(d)),
+                color=colors[i], label=os.path.splitext(infiles[i]), alpha=0.7,
                 orientation='horizontal')
 
             plt.axvline(x=0, color='silver', linestyle='--')
@@ -52,7 +59,7 @@ def plot_hists(infiles, same_ax=False):
             plt.yticks(fontsize=14)
 
 
-    plt.savefig('output.png', bbox_inches='tight')
+    plt.savefig('output.svg', bbox_inches='tight')
     plt.show()
 
 
