@@ -11,6 +11,12 @@ $ python dx_plot.py -i infile.dx -o outfile.png --view_dim x --view_dim_val 0
 Resources:
 - https://www.ks.uiuc.edu/Research/vmd/plugins/molfile/dxplugin.html
 
+Check / edit before using:
+- vmin, vmax values of color bar
+- X, Y arrays defined for contourf
+- xlim and ylim of plot
+- xlabel and ylabel of plot
+
 """
 
 import numpy as np
@@ -76,8 +82,34 @@ def dx_plot(infile, outfile, dim, dim_val):
 
             points.append(subpoints)
 
+    # convert units of kT/e to mV, 1 kT/e = 25.7 mV at 298 K
+    # http://bionano.physics.illinois.edu/sites/default/files/ion-tutorial.pdf
+    points = 25.7 * np.array(points)
+
+    # min should be bulk water, assign this as zero
+    # todo: maybe handle better without making this assumption
+    points = points - np.amin(points)
+    print(f"Min and max of potential: {np.amin(points)} {np.amax(points)}")
+
+    # define x and y ranges to use in contourf
+    x = np.arange(points.shape[1])
+    y = np.arange(points.shape[0])
+
+    # subtract midpoints such that middle is defined as zero
+    x = x - np.median(x)
+    y = y - np.median(y)
+
     # generate plot
-    plt.contourf(np.array(points))
+    plt.contourf(x, y, points, levels=6, vmin=0, vmax=900, cmap='cividis')
+
+    # add plot features
+    cb = plt.colorbar()
+    cb.ax.set_title('mV')
+    plt.xlim(-40, 40)
+    plt.ylim(-40, 40)
+    plt.xlabel(r'$y$ position in membrane ($\mathrm{\AA}$)')
+    plt.ylabel(r'$z$ position in membrane ($\mathrm{\AA}$)')
+
     plt.savefig(outfile)
     plt.show()
 
