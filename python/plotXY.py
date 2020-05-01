@@ -195,9 +195,9 @@ def format_fig(ax1, plt, fig, **kwargs):
     #ax1.text(2,11,"A",fontsize=10)
 
     # shade custom regions
-    ax1.axvspan(217, 222, facecolor='lightgrey', alpha=0.25)
-    ax1.axvspan(246, 254, facecolor='lightgrey', alpha=0.25)
-    ax1.axvspan(282, 286, facecolor='lightgrey', alpha=0.25)
+    #ax1.axvspan(217, 222, facecolor='lightgrey', alpha=0.25)
+    #ax1.axvspan(246, 254, facecolor='lightgrey', alpha=0.25)
+    #ax1.axvspan(282, 286, facecolor='lightgrey', alpha=0.25)
 
     plt.grid()
     #plt.grid(which='minor', alpha=0.2)
@@ -221,7 +221,7 @@ def format_fig(ax1, plt, fig, **kwargs):
         xSize = 18
         ySize = 18
         kSize = 16
-        fig.set_size_inches(30, 10)
+        fig.set_size_inches(8, 4)
         if 'legend' in locals():
             leg = ax1.legend(leglabel, loc='upper right')
 
@@ -315,6 +315,9 @@ def xyPlot(**kwargs):
             x = scale_x * np.asarray(range(len(y_mat[0])), dtype=np.float32)
         except TypeError:
             x = scale_x * np.asarray(range(len(y_mat)), dtype=np.float32)
+
+    # scale the x-axis (for if doSubsample and doMean are false)
+    x = 0.000002 * x
 
     # ================================================
     # PLOTTING STAGE
